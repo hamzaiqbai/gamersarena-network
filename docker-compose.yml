@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: gan-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
+      - EASYPAISA_USERNAME=${EASYPAISA_USERNAME}
+      - EASYPAISA_PASSWORD=${EASYPAISA_PASSWORD}
+      - EASYPAISA_STORE_ID=${EASYPAISA_STORE_ID}
+      - EASYPAISA_HASH_KEY=${EASYPAISA_HASH_KEY}
+      - JAZZCASH_MERCHANT_ID=${JAZZCASH_MERCHANT_ID}
+      - JAZZCASH_PASSWORD=${JAZZCASH_PASSWORD}
+      - JAZZCASH_INTEGRITY_SALT=${JAZZCASH_INTEGRITY_SALT}
+      - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN}
+      - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - FRONTEND_URL=${FRONTEND_URL}
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+    networks:
+      - gan-network
+
+  frontend:
+    image: nginx:alpine
+    container_name: gan-frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - gan-network
+
+networks:
+  gan-network:
+    driver: bridge

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament Details - GAN</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="tournament-page">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <a href="dashboard.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="logo">
+                <i class="fas fa-gamepad"></i>
+                <span>GAN</span>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <a href="wallet.html" class="wallet-btn" id="walletBtn">
+                <i class="fas fa-wallet"></i>
+                <span class="token-balance" id="tokenBalance">0</span>
+            </a>
+            <div class="user-menu" id="userMenu">
+                <img src="" alt="Profile" id="userAvatar" class="user-avatar"
+                     onerror="this.src='https://via.placeholder.com/40?text=U'">
+            </div>
+        </div>
+    </header>
+
+    <!-- Tournament Content -->
+    <main class="tournament-content">
+        <!-- Tournament Banner -->
+        <div class="tournament-banner" id="tournamentBanner">
+            <div class="banner-overlay"></div>
+            <div class="banner-content">
+                <span class="game-badge" id="gameBadge">FREE FIRE</span>
+                <h1 id="tournamentTitle">Loading...</h1>
+                <div class="tournament-meta">
+                    <span><i class="fas fa-calendar"></i> <span id="startDate">-</span></span>
+                    <span><i class="fas fa-users"></i> <span id="participants">-</span></span>
+                    <span><i class="fas fa-trophy"></i> <span id="prizePool">-</span> Tokens</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tournament Details -->
+        <div class="tournament-details">
+            <div class="details-main">
+                <!-- Status Card -->
+                <div class="status-card" id="statusCard">
+                    <div class="status-header">
+                        <span class="status-badge" id="statusBadge">LOADING</span>
+                    </div>
+                    <div class="status-info">
+                        <div class="info-item">
+                            <span class="label">Entry Fee</span>
+                            <span class="value" id="entryFee">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Slots</span>
+                            <span class="value" id="slotsInfo">-/-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Registration Ends</span>
+                            <span class="value" id="regEndDate">-</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Register Button -->
+                    <button class="btn btn-primary btn-large" id="registerBtn" disabled>
+                        <i class="fas fa-sign-in-alt"></i> Register Now
+                    </button>
+                    
+                    <!-- Already Registered -->
+                    <div class="registered-badge hidden" id="registeredBadge">
+                        <i class="fas fa-check-circle"></i>
+                        <span>You're Registered!</span>
+                    </div>
+                </div>
+
+                <!-- Prize Distribution -->
+                <div class="prize-card">
+                    <h3><i class="fas fa-medal"></i> Prize Distribution</h3>
+                    <div class="prize-list">
+                        <div class="prize-item gold">
+                            <span class="position">🥇 1st Place</span>
+                            <span class="reward" id="prize1">-</span>
+                        </div>
+                        <div class="prize-item silver">
+                            <span class="position">🥈 2nd Place</span>
+                            <span class="reward" id="prize2">-</span>
+                        </div>
+                        <div class="prize-item bronze">
+                            <span class="position">🥉 3rd Place</span>
+                            <span class="reward" id="prize3">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Room Details (for registered users) -->
+                <div class="room-card hidden" id="roomCard">
+                    <h3><i class="fas fa-door-open"></i> Room Details</h3>
+                    <div class="room-info">
+                        <div class="room-item">
+                            <label>Room ID</label>
+                            <div class="room-value">
+                                <span id="roomId">-</span>
+                                <button class="copy-btn" data-copy="roomId">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="room-item">
+                            <label>Password</label>
+                            <div class="room-value">
+                                <span id="roomPassword">-</span>
+                                <button class="copy-btn" data-copy="roomPassword">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="room-note">
+                        <i class="fas fa-info-circle"></i> 
+                        Room details will be available 15 minutes before the match
+                    </p>
+                </div>
+            </div>
+
+            <!-- Description & Rules -->
+            <div class="details-sidebar">
+                <div class="description-card">
+                    <h3><i class="fas fa-info-circle"></i> Description</h3>
+                    <p id="description">Loading...</p>
+                </div>
+
+                <div class="rules-card">
+                    <h3><i class="fas fa-list-ul"></i> Rules</h3>
+                    <div id="rules">Loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Participants -->
+        <section class="participants-section">
+            <h3><i class="fas fa-users"></i> Participants (<span id="participantCount">0</span>)</h3>
+            <div class="participants-grid" id="participantsGrid">
+                <!-- Will be populated by JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Registration Modal -->
+    <div class="modal hidden" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Confirm Registration</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-details">
+                    <p>You are about to register for:</p>
+                    <h3 id="confirmTournament">-</h3>
+                    <div class="confirm-fee">
+                        <span>Entry Fee:</span>
+                        <span id="confirmFee" class="tokens">- Tokens</span>
+                    </div>
+                    <div class="confirm-balance">
+                        <span>Your Balance:</span>
+                        <span id="confirmBalance" class="tokens">- Tokens</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPlayerId">Your Player ID</label>
+                    <input type="text" id="confirmPlayerId" placeholder="Enter your in-game ID">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelRegister">Cancel</button>
+                <button class="btn btn-primary" id="confirmRegister">
+                    <i class="fas fa-check"></i> Confirm & Pay
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Insufficient Balance Modal -->
+    <div class="modal hidden" id="insufficientModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-exclamation-triangle"></i> Insufficient Balance</h2>
+                <button class="modal-close" id="closeInsufficientModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>You don't have enough tokens to register for this tournament.</p>
+                <div class="balance-info">
+                    <div>Required: <strong id="requiredTokens">-</strong> Tokens</div>
+                    <div>Your Balance: <strong id="currentBalance">-</strong> Tokens</div>
+                    <div>Need: <strong id="neededTokens">-</strong> More Tokens</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelBuy">Maybe Later</button>
+                <a href="wallet.html" class="btn btn-primary">
+                    <i class="fas fa-coins"></i> Buy Tokens
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loader">
+            <i class="fas fa-gamepad fa-spin"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/tournament.js"></script>
+</body>
+</html>

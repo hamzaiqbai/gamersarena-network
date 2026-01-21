@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wallet - GAN</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="wallet-page">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <a href="dashboard.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="logo">
+                <i class="fas fa-gamepad"></i>
+                <span>GAN</span>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <div class="user-menu" id="userMenu">
+                <img src="" alt="Profile" id="userAvatar" class="user-avatar"
+                     onerror="this.src='https://via.placeholder.com/40?text=U'">
+            </div>
+        </div>
+    </header>
+
+    <!-- Wallet Content -->
+    <main class="wallet-content">
+        <!-- Balance Card -->
+        <section class="balance-section">
+            <div class="balance-card">
+                <div class="balance-header">
+                    <i class="fas fa-wallet"></i>
+                    <h2>My Wallet</h2>
+                </div>
+                <div class="balance-display">
+                    <div class="total-balance">
+                        <span class="label">Total Balance</span>
+                        <span class="amount" id="totalBalance">0</span>
+                        <span class="unit">Tokens</span>
+                    </div>
+                    <div class="balance-breakdown">
+                        <div class="breakdown-item">
+                            <i class="fas fa-coins"></i>
+                            <span class="label">Purchased</span>
+                            <span class="value" id="virtualTokens">0</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <i class="fas fa-trophy"></i>
+                            <span class="label">Rewards</span>
+                            <span class="value" id="rewardTokens">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="balance-actions">
+                    <button class="btn btn-primary" id="buyTokensBtn">
+                        <i class="fas fa-plus"></i> Buy Tokens
+                    </button>
+                    <button class="btn btn-secondary" id="transferBtn">
+                        <i class="fas fa-share"></i> Transfer
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Token Bundles -->
+        <section class="bundles-section" id="bundlesSection">
+            <h2 class="section-title">
+                <i class="fas fa-box"></i> Token Bundles
+            </h2>
+            <div class="bundles-grid" id="bundlesGrid">
+                <!-- Bundles will be loaded here -->
+                <div class="loading-placeholder">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading bundles...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transaction History -->
+        <section class="transactions-section">
+            <h2 class="section-title">
+                <i class="fas fa-history"></i> Transaction History
+            </h2>
+            <div class="transactions-list" id="transactionsList">
+                <!-- Transactions will be loaded here -->
+            </div>
+            <div class="load-more-container hidden" id="loadMoreTransactions">
+                <button class="btn btn-secondary" id="loadMoreBtn">
+                    Load More
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Payment Modal -->
+    <div class="modal hidden" id="paymentModal">
+        <div class="modal-content payment-modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-shopping-cart"></i> Purchase Tokens</h2>
+                <button class="modal-close" id="closePaymentModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="selected-bundle">
+                    <h3 id="bundleName">-</h3>
+                    <div class="bundle-details">
+                        <span><i class="fas fa-coins"></i> <span id="bundleTokens">0</span> Tokens</span>
+                        <span class="bonus" id="bundleBonus">+0 Bonus</span>
+                    </div>
+                    <div class="bundle-price">
+                        <span class="price" id="bundlePrice">Rs. 0</span>
+                    </div>
+                </div>
+
+                <div class="payment-methods">
+                    <h4>Select Payment Method</h4>
+                    <div class="method-options">
+                        <label class="method-option selected">
+                            <input type="radio" name="payment_method" value="easypaisa" checked>
+                            <div class="method-card">
+                                <img src="assets/images/easypaisa.png" alt="Easypaisa" 
+                                     onerror="this.src='https://via.placeholder.com/80x40?text=Easypaisa'">
+                                <span>Easypaisa</span>
+                            </div>
+                        </label>
+                        <label class="method-option">
+                            <input type="radio" name="payment_method" value="jazzcash">
+                            <div class="method-card">
+                                <img src="assets/images/jazzcash.png" alt="JazzCash"
+                                     onerror="this.src='https://via.placeholder.com/80x40?text=JazzCash'">
+                                <span>JazzCash</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentMobile">
+                        <i class="fas fa-mobile-alt"></i> Mobile Wallet Number
+                    </label>
+                    <div class="phone-input">
+                        <span class="country-code">+92</span>
+                        <input type="tel" id="paymentMobile" placeholder="3001234567" 
+                               pattern="[0-9]{10}" required>
+                    </div>
+                    <small>Payment request will be sent to this number</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelPayment">Cancel</button>
+                <button class="btn btn-primary" id="confirmPayment">
+                    <i class="fas fa-check"></i> Pay <span id="payAmount">Rs. 0</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Processing Modal -->
+    <div class="modal hidden" id="processingModal">
+        <div class="modal-content processing-modal">
+            <div class="processing-content">
+                <div class="processing-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h2>Payment Request Sent</h2>
+                <p>Please check your <strong id="walletName">mobile wallet</strong> app and confirm the payment.</p>
+                <div class="processing-status">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>Waiting for confirmation...</span>
+                </div>
+                <div class="processing-info">
+                    <p>Transaction ID: <span id="processingTxId">-</span></p>
+                    <p>Amount: <span id="processingAmount">-</span></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelProcessing">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transfer Modal -->
+    <div class="modal hidden" id="transferModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-share"></i> Transfer Tokens</h2>
+                <button class="modal-close" id="closeTransferModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="transfer-note">
+                    <i class="fas fa-info-circle"></i>
+                    Only reward tokens can be transferred to friends.
+                </p>
+                <div class="form-group">
+                    <label for="recipientEmail">Recipient Email</label>
+                    <input type="email" id="recipientEmail" placeholder="friend@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="transferAmount">Amount (Reward Tokens)</label>
+                    <input type="number" id="transferAmount" min="1" placeholder="Enter amount" required>
+                    <small>Available: <span id="availableReward">0</span> reward tokens</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelTransfer">Cancel</button>
+                <button class="btn btn-primary" id="confirmTransfer">
+                    <i class="fas fa-paper-plane"></i> Send Tokens
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal hidden" id="successModal">
+        <div class="modal-content success-modal">
+            <div class="success-content">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>Payment Successful!</h2>
+                <p>Your tokens have been added to your wallet.</p>
+                <div class="success-details">
+                    <div>Tokens Added: <strong id="tokensAdded">0</strong></div>
+                    <div>New Balance: <strong id="newBalance">0</strong></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="successClose">
+                    <i class="fas fa-gamepad"></i> Back to Gaming
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loader">
+            <i class="fas fa-gamepad fa-spin"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/wallet.js"></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAN - Gaming Arena Network</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal active">
+        <div class="modal-content login-modal">
+            <div class="login-header">
+                <div class="logo">
+                    <i class="fas fa-gamepad"></i>
+                    <span>GAN</span>
+                </div>
+                <h1>Gaming Arena Network</h1>
+                <p class="tagline">Battle. Win. Earn.</p>
+            </div>
+            
+            <div class="login-body">
+                <h2>Welcome, Gamer!</h2>
+                <p>Sign in to join tournaments and win rewards</p>
+                
+                <button id="googleLoginBtn" class="btn-google">
+                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google">
+                    <span>Continue with Google</span>
+                </button>
+                
+                <!-- Development Login Button -->
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">For Testing:</p>
+                    <button id="devLoginBtn" class="btn btn-secondary" style="width: 100%; max-width: 320px;">
+                        <i class="fas fa-code"></i>
+                        <span>Dev Login (Test User)</span>
+                    </button>
+                </div>
+                
+                <div class="login-features">
+                    <div class="feature">
+                        <i class="fas fa-trophy"></i>
+                        <span>Join Tournaments</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-coins"></i>
+                        <span>Earn Rewards</span>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-users"></i>
+                        <span>Connect with Gamers</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="login-footer">
+                <p>By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loader">
+            <i class="fas fa-gamepad fa-spin"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('gan_token');
+            
+            if (token) {
+                try {
+                    const user = await API.getCurrentUser();
+                    if (user) {
+                        // Redirect based on profile completion
+                        if (user.profile_completed) {
+                            window.location.href = 'dashboard.html';
+                        } else {
+                            window.location.href = 'profile.html';
+                        }
+                    }
+                } catch (error) {
+                    // Token invalid, clear and show login
+                    localStorage.removeItem('gan_token');
+                }
+            }
+            
+            // Google login button
+            document.getElementById('googleLoginBtn').addEventListener('click', () => {
+                window.location.href = API_BASE_URL + '/api/auth/google';
+            });
+            
+            // Dev login button (for testing)
+            document.getElementById('devLoginBtn').addEventListener('click', () => {
+                window.location.href = API_BASE_URL + '/api/auth/dev-login';
+            });
+        });
+        
+        // Handle OAuth callback (if redirected with token)
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        if (token) {
+            localStorage.setItem('gan_token', token);
+            window.location.href = 'profile.html';
+        }
+    </script>
+</body>
+</html>

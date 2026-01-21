@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Profile - GAN</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-gamepad"></i>
+            <span>GAN</span>
+        </div>
+        <div class="header-right">
+            <span id="userEmail" class="user-email"></span>
+        </div>
+    </header>
+
+    <!-- Profile Builder -->
+    <main class="profile-builder">
+        <div class="profile-container">
+            <div class="profile-header">
+                <h1><i class="fas fa-user-circle"></i> Complete Your Profile</h1>
+                <p>Tell us about yourself to join tournaments</p>
+            </div>
+
+            <form id="profileForm" class="profile-form">
+                <!-- Step 1: Personal Info -->
+                <div class="form-section" id="section1">
+                    <h2><span class="step-number">1</span> Personal Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="fullName"><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" id="fullName" name="full_name" required 
+                               placeholder="Enter your full name" minlength="2" maxlength="255">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age"><i class="fas fa-calendar"></i> Age</label>
+                            <input type="number" id="age" name="age" required 
+                                   placeholder="Your age" min="13" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="country"><i class="fas fa-globe"></i> Country</label>
+                            <select id="country" name="country" required>
+                                <option value="">Select Country</option>
+                                <option value="Pakistan">Pakistan</option>
+                                <option value="India">India</option>
+                                <option value="Bangladesh">Bangladesh</option>
+                                <option value="UAE">UAE</option>
+                                <option value="Saudi Arabia">Saudi Arabia</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city"><i class="fas fa-city"></i> City</label>
+                        <input type="text" id="city" name="city" required 
+                               placeholder="Your city" minlength="2" maxlength="100">
+                    </div>
+                </div>
+
+                <!-- Step 2: WhatsApp Verification -->
+                <div class="form-section" id="section2">
+                    <h2><span class="step-number">2</span> WhatsApp Verification</h2>
+                    
+                    <div class="form-group">
+                        <label for="whatsappNumber"><i class="fab fa-whatsapp"></i> WhatsApp Number</label>
+                        <div class="phone-input">
+                            <span class="country-code">+92</span>
+                            <input type="tel" id="whatsappNumber" name="whatsapp_number" 
+                                   placeholder="3001234567" pattern="[0-9]{10}" required>
+                        </div>
+                        <small>We'll send a verification code to this number</small>
+                    </div>
+
+                    <div id="verificationSection" class="verification-section hidden">
+                        <div class="form-group">
+                            <label for="verifyCode"><i class="fas fa-key"></i> Verification Code</label>
+                            <input type="text" id="verifyCode" placeholder="Enter 6-digit code" 
+                                   maxlength="6" pattern="[0-9]{6}">
+                        </div>
+                        <button type="button" id="verifyCodeBtn" class="btn btn-secondary">
+                            Verify Code
+                        </button>
+                        <button type="button" id="resendCodeBtn" class="btn-link">
+                            Resend Code
+                        </button>
+                    </div>
+
+                    <button type="button" id="sendCodeBtn" class="btn btn-whatsapp">
+                        <i class="fab fa-whatsapp"></i> Send Verification Code
+                    </button>
+
+                    <div id="verifiedBadge" class="verified-badge hidden">
+                        <i class="fas fa-check-circle"></i> WhatsApp Verified!
+                    </div>
+                </div>
+
+                <!-- Step 3: Gaming Profile -->
+                <div class="form-section" id="section3">
+                    <h2><span class="step-number">3</span> Gaming Profile</h2>
+                    
+                    <div class="form-group">
+                        <label for="preferredGame"><i class="fas fa-gamepad"></i> Preferred Game</label>
+                        <select id="preferredGame" name="preferred_game" required>
+                            <option value="">Select Your Game</option>
+                            <option value="freefire">Free Fire</option>
+                            <option value="pubg">PUBG Mobile</option>
+                            <option value="cod_mobile">Call of Duty Mobile</option>
+                            <option value="valorant">Valorant</option>
+                            <option value="counter_strike">Counter Strike</option>
+                            <option value="fortnite">Fortnite</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="playerId"><i class="fas fa-id-badge"></i> Player ID</label>
+                        <input type="text" id="playerId" name="player_id" required 
+                               placeholder="Your in-game ID" minlength="3" maxlength="100">
+                        <small>This is your unique ID in the selected game</small>
+                    </div>
+                </div>
+
+                <!-- Step 4: Payment Method -->
+                <div class="form-section" id="section4">
+                    <h2><span class="step-number">4</span> Payment Method</h2>
+                    
+                    <div class="payment-options">
+                        <label class="payment-option">
+                            <input type="radio" name="preferred_payment" value="easypaisa" checked>
+                            <div class="payment-card">
+                                <img src="assets/images/easypaisa.png" alt="Easypaisa" onerror="this.src='https://via.placeholder.com/60x40?text=EP'">
+                                <span>Easypaisa</span>
+                            </div>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="preferred_payment" value="jazzcash">
+                            <div class="payment-card">
+                                <img src="assets/images/jazzcash.png" alt="JazzCash" onerror="this.src='https://via.placeholder.com/60x40?text=JC'">
+                                <span>JazzCash</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mobileWallet"><i class="fas fa-mobile-alt"></i> Mobile Wallet Number</label>
+                        <div class="phone-input">
+                            <span class="country-code">+92</span>
+                            <input type="tel" id="mobileWallet" name="mobile_wallet_number" 
+                                   placeholder="3001234567" pattern="[0-9]{10}">
+                        </div>
+                        <small>Leave empty to use your WhatsApp number</small>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-actions">
+                    <button type="submit" id="submitProfile" class="btn btn-primary btn-large">
+                        <i class="fas fa-check"></i> Complete Profile & Enter Arena
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loader">
+            <i class="fas fa-gamepad fa-spin"></i>
+            <p>Saving...</p>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html>

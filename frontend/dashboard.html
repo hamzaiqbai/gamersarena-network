@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - GAN</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <i class="fas fa-gamepad"></i>
+                <span>GAN</span>
+            </div>
+        </div>
+        
+        <nav class="main-nav">
+            <a href="dashboard.html" class="nav-link active">
+                <i class="fas fa-trophy"></i> Tournaments
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-history"></i> My Games
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-medal"></i> Leaderboard
+            </a>
+        </nav>
+
+        <div class="header-right">
+            <!-- Wallet Button -->
+            <a href="wallet.html" class="wallet-btn" id="walletBtn">
+                <i class="fas fa-wallet"></i>
+                <span class="token-balance" id="tokenBalance">0</span>
+                <span class="token-label">Tokens</span>
+            </a>
+
+            <!-- User Profile -->
+            <div class="user-menu" id="userMenu">
+                <img src="" alt="Profile" id="userAvatar" class="user-avatar" 
+                     onerror="this.src='https://via.placeholder.com/40?text=U'">
+                <div class="dropdown-menu hidden" id="dropdownMenu">
+                    <div class="dropdown-header">
+                        <span id="userName">User</span>
+                        <span id="userEmail" class="small"></span>
+                    </div>
+                    <a href="profile.html" class="dropdown-item">
+                        <i class="fas fa-user"></i> Edit Profile
+                    </a>
+                    <a href="wallet.html" class="dropdown-item">
+                        <i class="fas fa-wallet"></i> My Wallet
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                    <hr>
+                    <a href="#" id="logoutBtn" class="dropdown-item text-danger">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1>Welcome to the Arena</h1>
+                <p>Join tournaments, compete with players, and win amazing rewards!</p>
+            </div>
+        </section>
+
+        <!-- Game Filter -->
+        <section class="filter-section">
+            <div class="game-filters" id="gameFilters">
+                <button class="filter-btn active" data-game="">
+                    <i class="fas fa-th"></i> All Games
+                </button>
+                <button class="filter-btn" data-game="freefire">
+                    <i class="fas fa-fire"></i> Free Fire
+                </button>
+                <button class="filter-btn" data-game="pubg">
+                    <i class="fas fa-crosshairs"></i> PUBG
+                </button>
+                <button class="filter-btn" data-game="cod_mobile">
+                    <i class="fas fa-gun"></i> COD Mobile
+                </button>
+                <button class="filter-btn" data-game="valorant">
+                    <i class="fas fa-shield-alt"></i> Valorant
+                </button>
+            </div>
+        </section>
+
+        <!-- Tournaments Grid -->
+        <section class="tournaments-section">
+            <h2 class="section-title">
+                <i class="fas fa-trophy"></i> Active Tournaments
+            </h2>
+            
+            <div class="tournaments-grid" id="tournamentsGrid">
+                <!-- Tournament cards will be loaded here -->
+                <div class="loading-placeholder">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading tournaments...</p>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state hidden" id="emptyState">
+                <i class="fas fa-calendar-times"></i>
+                <h3>No Tournaments Available</h3>
+                <p>Check back soon for upcoming tournaments!</p>
+            </div>
+
+            <!-- Load More -->
+            <div class="load-more-container hidden" id="loadMoreContainer">
+                <button class="btn btn-secondary" id="loadMoreBtn">
+                    Load More Tournaments
+                </button>
+            </div>
+        </section>
+
+        <!-- My Registrations -->
+        <section class="registrations-section">
+            <h2 class="section-title">
+                <i class="fas fa-clipboard-list"></i> My Registrations
+            </h2>
+            <div class="registrations-list" id="registrationsList">
+                <!-- Will be populated by JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Gaming Arena Network. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loader">
+            <i class="fas fa-gamepad fa-spin"></i>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
