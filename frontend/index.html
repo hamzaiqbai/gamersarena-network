@@ -30,15 +30,6 @@
                     <span>Continue with Google</span>
                 </button>
                 
-                <!-- Development Login Button -->
-                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
-                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">For Testing:</p>
-                    <button id="devLoginBtn" class="btn btn-secondary" style="width: 100%; max-width: 320px;">
-                        <i class="fas fa-code"></i>
-                        <span>Dev Login (Test User)</span>
-                    </button>
-                </div>
-                
                 <div class="login-features">
                     <div class="feature">
                         <i class="fas fa-trophy"></i>
@@ -56,7 +47,7 @@
             </div>
             
             <div class="login-footer">
-                <p>By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+                <p>By continuing, you agree to our <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a></p>
             </div>
         </div>
     </div>
@@ -97,11 +88,6 @@
             // Google login button
             document.getElementById('googleLoginBtn').addEventListener('click', () => {
                 window.location.href = API_BASE_URL + '/api/auth/google';
-            });
-            
-            // Dev login button (for testing)
-            document.getElementById('devLoginBtn').addEventListener('click', () => {
-                window.location.href = API_BASE_URL + '/api/auth/dev-login';
             });
         });
         

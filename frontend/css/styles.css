@@ -413,7 +413,7 @@ a:hover {
     border-radius: var(--radius-lg);
     max-width: 500px;
     width: 100%;
-    max-height: 90vh;
+    max-height: calc(100vh - 40px);
     overflow-y: auto;
     box-shadow: var(--shadow-lg);
 }
@@ -466,10 +466,12 @@ a:hover {
 .login-modal {
     max-width: 450px;
     text-align: center;
+    max-height: 100vh;
+    overflow: hidden;
 }
 
 .login-header {
-    padding: 40px 24px 20px;
+    padding: 30px 24px 15px;
 }
 
 .login-header .logo {
@@ -539,6 +541,41 @@ a:hover {
 .login-footer p {
     font-size: 0.8rem;
     color: var(--text-muted);
+}
+
+/* Make login page fit screen without scroll */
+@media screen and (max-height: 700px) {
+    .login-header {
+        padding: 20px 24px 10px;
+    }
+    .login-header .logo {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+    .login-header .logo i {
+        font-size: 2.5rem;
+    }
+    .login-header h1 {
+        font-size: 1.25rem;
+    }
+    .login-body {
+        padding: 16px 24px;
+    }
+    .login-body h2 {
+        font-size: 1.25rem;
+    }
+    .login-body > p {
+        margin-bottom: 16px;
+    }
+    .login-body .btn-google {
+        margin: 0 auto 20px;
+    }
+    .login-features {
+        gap: 16px;
+    }
+    .login-footer {
+        padding: 12px 24px;
+    }
 }
 
 /* ==========================================

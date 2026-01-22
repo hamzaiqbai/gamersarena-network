@@ -1,0 +1,164 @@
+Privacy Policy – Gamers Arena Network (GAN)
+
+Effective Date: [August 18th, 2025]
+Last Updated: [August 18th, 2025]
+
+Gamers Arena Network, also known as GA Network (“GAN,” “we,” “us,” or “our”), respects your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, store, and share information when you access or use our website, mobile applications, live tournaments, subscription services, and related features (collectively, the “Services”).
+
+By using Gamers Arena Network, you agree to the practices described in this Privacy Policy.
+
+1. Information We Collect
+A. Information You Provide
+
+When you create an account, log in, join tournaments, or purchase subscriptions, we may collect:
+
+Full name or username
+
+Email address
+
+Password (stored in encrypted form)
+
+Gamer tag / in-game identifiers
+
+Date of birth or age verification information
+
+Payment and billing details (processed securely via third-party providers)
+
+Subscription details
+
+Tournament participation data
+
+Profile information (avatar, preferences)
+
+Communications with GAN support or administrators
+
+B. Information Collected Automatically
+
+When you use GA Network, we may automatically collect:
+
+IP address
+
+Device type, operating system, and browser
+
+Log files and usage activity
+
+Pages viewed, actions taken, and timestamps
+
+Cookies and similar tracking technologies
+
+This data helps us operate the platform, maintain security, and improve user experience.
+
+2. How We Use Your Information
+
+We use collected information to:
+
+Create and manage user accounts
+
+Authenticate logins and secure accounts
+
+Enable participation in live tournaments
+
+Process subscriptions, payments, and refunds
+
+Provide customer support and communicate updates
+
+Send service-related notifications
+
+Improve platform performance and features
+
+Prevent fraud, cheating, abuse, and unauthorized access
+
+Comply with legal and regulatory obligations
+
+3. Legal Basis for Processing (Where Applicable)
+
+We process personal data based on:
+
+Performance of a contract (account access, tournaments, subscriptions)
+
+Your consent (marketing communications, optional features)
+
+Legitimate interests (security, analytics, platform improvement)
+
+Legal obligations
+
+4. Sharing of Information
+
+We may share your information with:
+
+Service Providers: payment processors, hosting services, analytics providers
+
+Tournament Partners: organizers or sponsors necessary to run events
+
+Legal Authorities: when required by law or to protect GAN’s rights
+
+With Your Consent: when you authorize us to share information
+
+GAN does not sell your personal data.
+
+5. Cookies & Tracking Technologies
+
+Gamers Arena Network uses cookies and similar technologies to:
+
+Keep users logged in
+
+Remember preferences
+
+Analyze traffic and usage
+
+Improve platform functionality
+
+You may control cookies through your browser settings, though some features may not function properly if cookies are disabled.
+
+6. Data Retention
+
+We retain personal information only for as long as necessary to:
+
+Provide our Services
+
+Maintain records required by law
+
+Resolve disputes
+
+Enforce agreements
+
+When no longer required, data is securely deleted or anonymized.
+
+7. Your Rights
+
+Depending on your location, you may have the right to:
+
+Access your personal information
+
+Update or correct your data
+
+Request deletion of your account
+
+Object to or restrict certain data processing
+
+Opt out of marketing communications
+
+Requests can be made by contacting us at [privacy@gamersarena.network
+] (replace with your real email).
+
+8. Security
+
+We use industry-standard security measures to protect your information, including encryption, access controls, and secure servers. However, no online system can be guaranteed 100% secure.
+
+9. Children’s Privacy
+
+Gamers Arena Network is not intended for users under the age of 13 (or the minimum age required in your jurisdiction). We do not knowingly collect personal data from children without parental consent. If such data is discovered, it will be deleted.
+
+10. Changes to This Privacy Policy
+
+We may update this Privacy Policy from time to time. Changes will be posted on this page with a revised “Last Updated” date. Continued use of GA Network means you accept the updated policy.
+
+11. Contact Us
+
+If you have questions or concerns about this Privacy Policy, please contact:
+
+Gamers Arena Network (GAN)
+Email: [support@gamersarena.network
+]
+Website: [gamersarena.network]
+Address: [Islamabad, Pakistan]
