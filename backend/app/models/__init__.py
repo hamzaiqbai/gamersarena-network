@@ -4,6 +4,7 @@ from .wallet import Wallet
 from .tournament import Tournament, TokenBundle
 from .transaction import Transaction
 from .registration import Registration
+from .admin import AdminUser
 
 __all__ = [
     "User",
@@ -11,5 +12,6 @@ __all__ = [
     "Tournament",
     "TokenBundle",
     "Transaction",
-    "Registration"
+    "Registration",
+    "AdminUser"
 ]

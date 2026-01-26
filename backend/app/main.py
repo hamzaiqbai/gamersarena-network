@@ -17,7 +17,8 @@ from .routers import (
     wallets_router,
     tournaments_router,
     payments_router,
-    whatsapp_router
+    whatsapp_router,
+    admin_router
 )
 
 # Configure logging
@@ -91,6 +92,7 @@ app.include_router(wallets_router)
 app.include_router(tournaments_router)
 app.include_router(payments_router)
 app.include_router(whatsapp_router)
+app.include_router(admin_router)
 
 
 # Health check endpoint

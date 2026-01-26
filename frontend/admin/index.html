@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAN Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="admin-logo">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <h1>GAN Admin</h1>
+                <p>Gaming Arena Network - Admin Panel</p>
+            </div>
+            
+            <!-- Setup Form (shown when no admin exists) -->
+            <form id="setupForm" class="auth-form hidden">
+                <h2>First Time Setup</h2>
+                <p class="setup-note">Create your admin account to get started</p>
+                
+                <div class="form-group">
+                    <label for="setupEmail">Email</label>
+                    <input type="email" id="setupEmail" required placeholder="admin@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="setupName">Full Name</label>
+                    <input type="text" id="setupName" placeholder="Admin Name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="setupPassword">Password</label>
+                    <input type="password" id="setupPassword" required minlength="8" placeholder="Min 8 characters">
+                </div>
+                
+                <div class="form-group">
+                    <label for="setupPasswordConfirm">Confirm Password</label>
+                    <input type="password" id="setupPasswordConfirm" required placeholder="Confirm password">
+                </div>
+                
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-user-plus"></i> Create Admin Account
+                </button>
+            </form>
+            
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required placeholder="admin@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Your password">
+                </div>
+                
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                
+                <a href="#" id="forgotPasswordLink" class="forgot-link">Forgot Password?</a>
+            </form>
+            
+            <!-- Password Reset Form -->
+            <form id="resetForm" class="auth-form hidden">
+                <h2>Reset Password</h2>
+                
+                <div class="form-group">
+                    <label for="resetEmail">Email</label>
+                    <input type="email" id="resetEmail" required placeholder="admin@example.com">
+                </div>
+                
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-paper-plane"></i> Send Reset Link
+                </button>
+                
+                <a href="#" id="backToLogin" class="forgot-link">Back to Login</a>
+            </form>
+            
+            <div id="loginError" class="error-message hidden"></div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="admin-dashboard hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="admin-logo small">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <span class="logo-text">GAN Admin</span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-tab="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="users">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="wallets">
+                    <i class="fas fa-wallet"></i>
+                    <span>Wallets</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="tournaments">
+                    <i class="fas fa-trophy"></i>
+                    <span>Tournaments</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="payments">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Payments</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="rewards">
+                    <i class="fas fa-gift"></i>
+                    <span>Rewards</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="admin-info">
+                    <i class="fas fa-user-shield"></i>
+                    <span id="adminName">Admin</span>
+                </div>
+                <button id="logoutBtn" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <div id="dashboardTab" class="tab-content active">
+                <div class="page-header">
+                    <h1>Dashboard</h1>
+                    <p>Overview of your gaming platform</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card users">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="statTotalUsers">0</h3>
+                            <p>Total Users</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card tournaments">
+                        <div class="stat-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="statActiveTournaments">0</h3>
+                            <p>Active Tournaments</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card tokens">
+                        <div class="stat-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="statTotalTokens">0</h3>
+                            <p>Tokens in Circulation</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card revenue">
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="statTotalRevenue">PKR 0</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-user-plus"></i> Recent Users</h3>
+                        <div id="recentUsers" class="mini-table"></div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-exchange-alt"></i> Recent Transactions</h3>
+                        <div id="recentTransactions" class="mini-table"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Tab -->
+            <div id="usersTab" class="tab-content hidden">
+                <div class="page-header">
+                    <h1>Users Management</h1>
+                    <div class="header-actions">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="userSearch" placeholder="Search users...">
+                        </div>
+                        <select id="userStatusFilter" class="filter-select">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="blocked">Blocked</option>
+                            <option value="verified">Verified</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="user-stats">
+                    <div class="mini-stat">
+                        <span class="mini-stat-value" id="usersActive">0</span>
+                        <span class="mini-stat-label">Active</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-value" id="usersVerified">0</span>
+                        <span class="mini-stat-label">Verified</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-value" id="usersBlocked">0</span>
+                        <span class="mini-stat-label">Blocked</span>
+                    </div>
+                    <div class="mini-stat">
+                        <span class="mini-stat-value" id="usersNewToday">0</span>
+                        <span class="mini-stat-label">New Today</span>
+                    </div>
+                </div>
+                
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Player ID</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="usersPagination" class="pagination"></div>
+            </div>
+
+            <!-- Wallets Tab -->
+            <div id="walletsTab" class="tab-content hidden">
+                <div class="page-header">
+                    <h1>Wallets Management</h1>
+                </div>
+                
+                <div class="wallet-stats">
+                    <div class="stat-card-sm">
+                        <i class="fas fa-coins"></i>
+                        <div>
+                            <h3 id="totalVirtualTokens">0</h3>
+                            <p>Virtual Tokens</p>
+                        </div>
+                    </div>
+                    <div class="stat-card-sm">
+                        <i class="fas fa-gift"></i>
+                        <div>
+                            <h3 id="totalRewardTokens">0</h3>
+                            <p>Reward Tokens</p>
+                        </div>
+                    </div>
+                    <div class="stat-card-sm">
+                        <i class="fas fa-money-bill"></i>
+                        <div>
+                            <h3 id="totalSpentPKR">PKR 0</h3>
+                            <p>Total Spent</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Virtual Tokens</th>
+                                <th>Reward Tokens</th>
+                                <th>Total Earned</th>
+                                <th>Total Spent</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="walletsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tournaments Tab -->
+            <div id="tournamentsTab" class="tab-content hidden">
+                <div class="page-header">
+                    <h1>Tournaments Management</h1>
+                    <button id="createTournamentBtn" class="btn-primary">
+                        <i class="fas fa-plus"></i> Create Tournament
+                    </button>
+                </div>
+                
+                <div class="tournament-filters">
+                    <select id="tournamentStatusFilter" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="registration_open">Registration Open</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                    <select id="tournamentGameFilter" class="filter-select">
+                        <option value="">All Games</option>
+                        <option value="PUBG Mobile">PUBG Mobile</option>
+                        <option value="Free Fire">Free Fire</option>
+                        <option value="Call of Duty Mobile">Call of Duty Mobile</option>
+                        <option value="BGMI">BGMI</option>
+                    </select>
+                </div>
+                
+                <div id="tournamentsGrid" class="tournaments-grid">
+                </div>
+            </div>
+
+            <!-- Payments Tab -->
+            <div id="paymentsTab" class="tab-content hidden">
+                <div class="page-header">
+                    <h1>Payments & Transactions</h1>
+                </div>
+                
+                <div class="payment-stats">
+                    <div class="stat-card-sm">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h3 id="completedTransactions">0</h3>
+                            <p>Completed</p>
+                        </div>
+                    </div>
+                    <div class="stat-card-sm">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h3 id="pendingTransactions">0</h3>
+                            <p>Pending</p>
+                        </div>
+                    </div>
+                    <div class="stat-card-sm">
+                        <i class="fas fa-times-circle"></i>
+                        <div>
+                            <h3 id="failedTransactions">0</h3>
+                            <p>Failed</p>
+                        </div>
+                    </div>
+                    <div class="stat-card-sm">
+                        <i class="fas fa-chart-line"></i>
+                        <div>
+                            <h3 id="totalRevenuePKR">PKR 0</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="transaction-filters">
+                    <select id="transactionStatusFilter" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="completed">Completed</option>
+                        <option value="pending">Pending</option>
+                        <option value="failed">Failed</option>
+                    </select>
+                    <select id="transactionTypeFilter" class="filter-select">
+                        <option value="">All Types</option>
+                        <option value="purchase">Purchase</option>
+                        <option value="tournament_entry">Tournament Entry</option>
+                        <option value="tournament_reward">Tournament Reward</option>
+                        <option value="bonus">Bonus</option>
+                    </select>
+                </div>
+                
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>User</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Rewards Tab -->
+            <div id="rewardsTab" class="tab-content hidden">
+                <div class="page-header">
+                    <h1>Rewards & Leaderboard</h1>
+                </div>
+                
+                <div class="rewards-stats">
+                    <div class="stat-card-sm">
+                        <i class="fas fa-gift"></i>
+                        <div>
+                            <h3 id="totalDistributed">0</h3>
+                            <p>Total Distributed</p>
+                        </div>
+                    </div>
+                    <div class="stat-card-sm">
+                        <i class="fas fa-coins"></i>
+                        <div>
+                            <h3 id="currentRewardBalance">0</h3>
+                            <p>Current Balance</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="leaderboard-section">
+                    <h2><i class="fas fa-medal"></i> Top Earners</h2>
+                    <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Player</th>
+                                    <th>Player ID</th>
+                                    <th>Total Earned</th>
+                                    <th>Current Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboardTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Tournament Modal -->
+    <div id="tournamentModal" class="modal hidden">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2 id="tournamentModalTitle">Create Tournament</h2>
+                <button class="modal-close" onclick="closeTournamentModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="tournamentForm">
+                <input type="hidden" id="tournamentId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tournamentTitle">Title *</label>
+                        <input type="text" id="tournamentTitle" required placeholder="Tournament name">
+                    </div>
+                    <div class="form-group">
+                        <label for="tournamentGame">Game *</label>
+                        <select id="tournamentGame" required>
+                            <option value="">Select Game</option>
+                            <option value="PUBG Mobile">PUBG Mobile</option>
+                            <option value="Free Fire">Free Fire</option>
+                            <option value="Call of Duty Mobile">Call of Duty Mobile</option>
+                            <option value="BGMI">BGMI</option>
+                            <option value="Valorant">Valorant</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tournamentDescription">Description</label>
+                    <textarea id="tournamentDescription" rows="3" placeholder="Tournament description"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tournamentEntryFee">Entry Fee (Tokens)</label>
+                        <input type="number" id="tournamentEntryFee" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="tournamentPrizePool">Prize Pool (Tokens)</label>
+                        <input type="number" id="tournamentPrizePool" value="0" min="0">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tournament1stReward">1st Place Reward</label>
+                        <input type="number" id="tournament1stReward" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="tournament2ndReward">2nd Place Reward</label>
+                        <input type="number" id="tournament2ndReward" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="tournament3rdReward">3rd Place Reward</label>
+                        <input type="number" id="tournament3rdReward" value="0" min="0">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tournamentMaxParticipants">Max Participants</label>
+                        <input type="number" id="tournamentMaxParticipants" value="100" min="2">
+                    </div>
+                    <div class="form-group">
+                        <label for="tournamentMinParticipants">Min Participants</label>
+                        <input type="number" id="tournamentMinParticipants" value="2" min="2">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tournamentStartDate">Start Date *</label>
+                        <input type="datetime-local" id="tournamentStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tournamentEndDate">End Date</label>
+                        <input type="datetime-local" id="tournamentEndDate">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tournamentRegStart">Registration Start</label>
+                        <input type="datetime-local" id="tournamentRegStart">
+                    </div>
+                    <div class="form-group">
+                        <label for="tournamentRegEnd">Registration End</label>
+                        <input type="datetime-local" id="tournamentRegEnd">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tournamentRoomId">Room ID</label>
+                        <input type="text" id="tournamentRoomId" placeholder="Game room ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="tournamentRoomPassword">Room Password</label>
+                        <input type="text" id="tournamentRoomPassword" placeholder="Game room password">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tournamentBanner">Banner URL</label>
+                    <input type="url" id="tournamentBanner" placeholder="https://example.com/banner.jpg">
+                </div>
+                
+                <div class="form-group">
+                    <label for="tournamentStatus">Status</label>
+                    <select id="tournamentStatus">
+                        <option value="upcoming">Upcoming</option>
+                        <option value="registration_open">Registration Open</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="tournamentRules">Rules</label>
+                    <textarea id="tournamentRules" rows="4" placeholder="Tournament rules..."></textarea>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeTournamentModal()">Cancel</button>
+                    <button type="submit" class="btn-primary" id="tournamentSubmitBtn">
+                        <i class="fas fa-save"></i> Save Tournament
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Detail Modal -->
+    <div id="userModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>User Details</h2>
+                <button class="modal-close" onclick="closeUserModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="userModalContent" class="modal-body">
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Tokens Modal -->
+    <div id="addTokensModal" class="modal hidden">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h2>Add Tokens</h2>
+                <button class="modal-close" onclick="closeAddTokensModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="addTokensForm">
+                <input type="hidden" id="addTokensUserId">
+                
+                <div class="form-group">
+                    <label for="addTokensAmount">Amount</label>
+                    <input type="number" id="addTokensAmount" required min="1" placeholder="Number of tokens">
+                </div>
+                
+                <div class="form-group">
+                    <label for="addTokensType">Token Type</label>
+                    <select id="addTokensType">
+                        <option value="virtual">Virtual Tokens</option>
+                        <option value="reward">Reward Tokens</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="addTokensReason">Reason</label>
+                    <input type="text" id="addTokensReason" placeholder="Reason for adjustment">
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeAddTokensModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-plus"></i> Add Tokens
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/admin-api.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

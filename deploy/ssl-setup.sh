@@ -13,7 +13,7 @@ cat > /etc/nginx/sites-available/gamersarena.network << 'EOF'
 server {
     listen 80;
     listen [::]:80;
-    server_name gamersarena.network www.gamersarena.network api.gamersarena.network;
+    server_name gamersarena.network www.gamersarena.network api.gamersarena.network administrator.gamersarena.network;
     
     root /opt/gan/frontend;
     index index.html;
@@ -74,6 +74,7 @@ certbot --nginx \
     -d gamersarena.network \
     -d www.gamersarena.network \
     -d api.gamersarena.network \
+    -d administrator.gamersarena.network \
     --non-interactive \
     --agree-tos \
     --email admin@gamersarena.network \
@@ -96,3 +97,4 @@ echo "Your site is now accessible at:"
 echo "  - https://gamersarena.network"
 echo "  - https://www.gamersarena.network"
 echo "  - https://api.gamersarena.network"
+echo "  - https://administrator.gamersarena.network"
