@@ -4,6 +4,7 @@
 
 const ADMIN_API = {
     // Detect environment and set base URL
+    // Always use main domain for API calls (CORS is configured to allow admin subdomain)
     BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
         ? 'http://localhost:8000'
         : 'https://gamersarena.network',

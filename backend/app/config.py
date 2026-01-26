@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     
     # Frontend URL (for CORS and redirects)
     FRONTEND_URL: str = "http://localhost:3000"
-    CORS_ORIGINS: str = "http://localhost:3000,http://localhost:8000,http://127.0.0.1:3000,https://gamersarena.network,https://www.gamersarena.network,https://api.gamersarena.network"
+    CORS_ORIGINS: str = "http://localhost:3000,http://localhost:8000,http://127.0.0.1:3000,https://gamersarena.network,https://www.gamersarena.network,https://api.gamersarena.network,https://administrator.gamersarena.network"
     
     # Database
     DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/gan_db"
