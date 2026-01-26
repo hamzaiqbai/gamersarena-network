@@ -154,6 +154,17 @@ async def admin_login(request: AdminLoginRequest, db: Session = Depends(get_db))
         "admin": admin.to_dict()
     }
 
+@router.get("/auth/check-setup")
+async def check_setup_needed(db: Session = Depends(get_db)):
+    """
+    Check if first-time setup is needed (no admins exist).
+    """
+    existing = db.query(AdminUser).count()
+    return {
+        "setup_needed": existing == 0,
+        "admin_count": existing
+    }
+
 @router.post("/auth/setup")
 async def admin_setup(request: AdminCreateRequest, db: Session = Depends(get_db)):
     """

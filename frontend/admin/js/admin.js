@@ -39,20 +39,24 @@ function showLoginScreen() {
 
 async function checkSetupNeeded() {
     try {
-        // Try login with empty to see if setup is needed
-        const response = await fetch(`${ADMIN_API.BASE_URL}/api/admin/auth/setup`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: 'test@test.com', password: 'test1234' })
-        });
+        // Check if setup is needed via dedicated endpoint
+        const response = await fetch(`${ADMIN_API.BASE_URL}/api/admin/auth/check-setup`);
+        const data = await response.json();
         
-        if (response.status === 403) {
-            // Admin exists, show login
+        if (data.setup_needed) {
+            // No admin exists, show setup form
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('setupForm').classList.remove('hidden');
+        } else {
+            // Admin exists, show login form
             document.getElementById('loginForm').classList.remove('hidden');
             document.getElementById('setupForm').classList.add('hidden');
         }
     } catch (e) {
-        // Show setup form by default for first time
+        // Network error - show login form as default
+        console.error('Setup check failed:', e);
+        document.getElementById('loginForm').classList.remove('hidden');
+        document.getElementById('setupForm').classList.add('hidden');
     }
 }
 
