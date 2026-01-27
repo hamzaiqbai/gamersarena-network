@@ -144,7 +144,6 @@ function setupEventListeners() {
     
     // Banner upload
     document.getElementById('tournamentBannerFile').addEventListener('change', handleBannerUpload);
-    document.getElementById('tournamentBanner').addEventListener('input', handleBannerUrlInput);
     
     // Transaction filters
     document.getElementById('transactionStatusFilter').addEventListener('change', () => {
@@ -590,25 +589,15 @@ async function handleBannerUpload(e) {
     try {
         showToast('Uploading banner...', 'info');
         const result = await ADMIN_API.uploadBanner(file);
-        uploadedBannerUrl = result.url;
+        uploadedBannerUrl = result.banner_url;
         document.getElementById('tournamentBanner').value = uploadedBannerUrl;
         showToast('Banner uploaded successfully', 'success');
     } catch (error) {
         console.error('Banner upload error:', error);
         showToast('Failed to upload banner', 'error');
-        preview.innerHTML = '<span>Banner Preview</span>';
+        preview.innerHTML = '<i class="fas fa-image"></i><span>No banner selected</span>';
         e.target.value = '';
-    }
-}
-
-function handleBannerUrlInput(e) {
-    const url = e.target.value;
-    const preview = document.getElementById('bannerPreview');
-    
-    if (url) {
-        preview.innerHTML = `<img src="${url}" alt="Banner preview" onerror="this.parentElement.innerHTML='<span>Invalid image URL</span>'">`;
-    } else {
-        preview.innerHTML = '<span>Banner Preview</span>';
+        uploadedBannerUrl = null;
     }
 }
 
