@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 import logging
+import os
 
 from .config import settings
 from .database import init_db, engine, Base
@@ -27,6 +28,10 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
+
+# Create uploads directory
+UPLOADS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "uploads")
+os.makedirs(os.path.join(UPLOADS_DIR, "banners"), exist_ok=True)
 
 
 @asynccontextmanager
@@ -93,6 +98,9 @@ app.include_router(tournaments_router)
 app.include_router(payments_router)
 app.include_router(whatsapp_router)
 app.include_router(admin_router)
+
+# Mount static files for uploads
+app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
 
 
 # Health check endpoint

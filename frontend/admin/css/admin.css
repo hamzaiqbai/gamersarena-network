@@ -933,3 +933,97 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* Banner Upload Styles */
+.banner-upload-container {
+    background: var(--input-bg);
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.banner-preview {
+    width: 100%;
+    height: 150px;
+    background: var(--dark-bg);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.banner-preview i {
+    font-size: 36px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.banner-preview span {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.banner-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.banner-upload-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-upload {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: var(--primary);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.btn-upload:hover {
+    background: var(--primary-dark);
+}
+
+.or-text {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.banner-url-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 14px;
+    background: var(--dark-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.banner-url-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* Delete button style */
+.action-btn.delete-user {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
+}
+
+.action-btn.delete-user:hover {
+    background: rgba(239, 68, 68, 0.3);
+}

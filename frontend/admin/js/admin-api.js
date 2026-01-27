@@ -144,6 +144,12 @@ const ADMIN_API = {
         });
     },
     
+    async deleteUser(userId) {
+        return await this.request(`/api/admin/users/${userId}`, {
+            method: 'DELETE'
+        });
+    },
+    
     // ==================== Wallets ====================
     
     async getWallets(params = {}) {
@@ -171,6 +177,27 @@ const ADMIN_API = {
     
     async getTournament(tournamentId) {
         return await this.request(`/api/admin/tournaments/${tournamentId}`);
+    },
+    
+    async uploadBanner(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const url = `${this.BASE_URL}/api/admin/upload/banner`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${this.token}`
+            },
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Upload failed');
+        }
+        
+        return await response.json();
     },
     
     async createTournament(data) {

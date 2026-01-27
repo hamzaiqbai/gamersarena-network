@@ -2,7 +2,7 @@
 Admin Router - Admin panel API endpoints
 Handles admin authentication, dashboard stats, and CRUD operations
 """
-from fastapi import APIRouter, Depends, HTTPException, status, Header
+from fastapi import APIRouter, Depends, HTTPException, status, Header, UploadFile, File
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime, timedelta
@@ -10,6 +10,8 @@ from typing import Optional, List
 from pydantic import BaseModel, EmailStr
 import jwt
 import secrets
+import os
+import uuid
 
 from ..database import get_db
 from ..config import settings
@@ -21,6 +23,10 @@ from ..models.transaction import Transaction
 from ..models.registration import Registration
 
 router = APIRouter(prefix="/api/admin", tags=["Admin"])
+
+# Upload directory for banners
+UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "uploads", "banners")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # ============================================================
 # Pydantic Schemas
@@ -329,6 +335,7 @@ async def list_users(
     skip: int = 0,
     limit: int = 50,
     search: Optional[str] = None,
+    search_by: Optional[str] = None,  # email, phone, whatsapp, player_id, name, all
     status: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
@@ -338,11 +345,25 @@ async def list_users(
     query = db.query(User)
     
     if search:
-        query = query.filter(
-            (User.email.ilike(f"%{search}%")) |
-            (User.full_name.ilike(f"%{search}%")) |
-            (User.player_id.ilike(f"%{search}%"))
-        )
+        if search_by == "email":
+            query = query.filter(User.email.ilike(f"%{search}%"))
+        elif search_by == "phone":
+            query = query.filter(User.phone_number.ilike(f"%{search}%"))
+        elif search_by == "whatsapp":
+            query = query.filter(User.whatsapp_number.ilike(f"%{search}%"))
+        elif search_by == "player_id":
+            query = query.filter(User.player_id.ilike(f"%{search}%"))
+        elif search_by == "name":
+            query = query.filter(User.full_name.ilike(f"%{search}%"))
+        else:
+            # Search all fields
+            query = query.filter(
+                (User.email.ilike(f"%{search}%")) |
+                (User.full_name.ilike(f"%{search}%")) |
+                (User.player_id.ilike(f"%{search}%")) |
+                (User.phone_number.ilike(f"%{search}%")) |
+                (User.whatsapp_number.ilike(f"%{search}%"))
+            )
     
     if status == "active":
         query = query.filter(User.is_active == True)
@@ -418,6 +439,30 @@ async def unblock_user(
     db.commit()
     
     return {"message": "User unblocked successfully"}
+
+@router.delete("/users/{user_id}")
+async def delete_user(
+    user_id: str,
+    authorization: str = Header(None),
+    db: Session = Depends(get_db)
+):
+    """Delete a user and all associated data"""
+    get_current_admin(authorization, db)
+    
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Delete associated data
+    db.query(Transaction).filter(Transaction.user_id == user_id).delete()
+    db.query(Registration).filter(Registration.user_id == user_id).delete()
+    db.query(Wallet).filter(Wallet.user_id == user_id).delete()
+    
+    # Delete the user
+    db.delete(user)
+    db.commit()
+    
+    return {"message": "User deleted successfully"}
 
 # ============================================================
 # Wallet Management
@@ -514,6 +559,43 @@ async def list_tournaments_admin(
     return {
         "total": total,
         "tournaments": [t.to_dict(include_room_info=True) for t in tournaments]
+    }
+
+@router.post("/upload/banner")
+async def upload_banner(
+    file: UploadFile = File(...),
+    authorization: str = Header(None),
+    db: Session = Depends(get_db)
+):
+    """Upload a tournament banner image"""
+    get_current_admin(authorization, db)
+    
+    # Validate file type
+    allowed_types = ["image/jpeg", "image/png", "image/gif", "image/webp"]
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="Invalid file type. Allowed: JPEG, PNG, GIF, WebP")
+    
+    # Validate file size (max 5MB)
+    contents = await file.read()
+    if len(contents) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File too large. Max size: 5MB")
+    
+    # Generate unique filename
+    ext = file.filename.split(".")[-1] if "." in file.filename else "jpg"
+    filename = f"{uuid.uuid4().hex}.{ext}"
+    filepath = os.path.join(UPLOAD_DIR, filename)
+    
+    # Save file
+    with open(filepath, "wb") as f:
+        f.write(contents)
+    
+    # Return the URL path
+    banner_url = f"/uploads/banners/{filename}"
+    
+    return {
+        "message": "Banner uploaded successfully",
+        "banner_url": banner_url,
+        "filename": filename
     }
 
 @router.post("/tournaments")

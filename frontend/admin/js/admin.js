@@ -128,6 +128,11 @@ function setupEventListeners() {
         loadUsers();
     }, 300));
     
+    document.getElementById('userSearchBy').addEventListener('change', () => {
+        usersPage = 0;
+        loadUsers();
+    });
+    
     document.getElementById('userStatusFilter').addEventListener('change', () => {
         usersPage = 0;
         loadUsers();
@@ -136,6 +141,10 @@ function setupEventListeners() {
     // Tournament filters
     document.getElementById('tournamentStatusFilter').addEventListener('change', loadTournaments);
     document.getElementById('tournamentGameFilter').addEventListener('change', loadTournaments);
+    
+    // Banner upload
+    document.getElementById('tournamentBannerFile').addEventListener('change', handleBannerUpload);
+    document.getElementById('tournamentBanner').addEventListener('input', handleBannerUrlInput);
     
     // Transaction filters
     document.getElementById('transactionStatusFilter').addEventListener('change', () => {
@@ -295,6 +304,7 @@ async function loadDashboard() {
 async function loadUsers() {
     try {
         const search = document.getElementById('userSearch').value;
+        const searchBy = document.getElementById('userSearchBy').value;
         const status = document.getElementById('userStatusFilter').value;
         
         const stats = await ADMIN_API.getDashboardStats();
@@ -307,6 +317,7 @@ async function loadUsers() {
             skip: usersPage * 50,
             limit: 50,
             search,
+            search_by: searchBy,
             status
         });
         
@@ -337,6 +348,9 @@ async function loadUsers() {
                         ? `<button class="action-btn block" onclick="blockUser('${user.id}')"><i class="fas fa-ban"></i></button>`
                         : `<button class="action-btn unblock" onclick="unblockUser('${user.id}')"><i class="fas fa-check"></i></button>`
                     }
+                    <button class="action-btn delete-user" onclick="deleteUser('${user.id}', '${(user.full_name || user.email).replace(/'/g, "\\'")}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </td>
             </tr>
         `).join('');
@@ -458,6 +472,21 @@ async function unblockUser(userId) {
     }
 }
 
+async function deleteUser(userId, userName) {
+    if (!confirm(`Are you sure you want to permanently delete user "${userName}"?\n\nThis will also delete:\n- Their wallet\n- All registrations\n- All transactions\n\nThis action cannot be undone!`)) {
+        return;
+    }
+    
+    try {
+        await ADMIN_API.deleteUser(userId);
+        showToast('User deleted successfully', 'success');
+        loadUsers();
+    } catch (error) {
+        console.error('Delete user error:', error);
+        showToast('Failed to delete user', 'error');
+    }
+}
+
 function closeUserModal() {
     document.getElementById('userModal').classList.add('hidden');
 }
@@ -527,6 +556,62 @@ async function handleAddTokens(e) {
 
 // ==================== Tournaments ====================
 
+// Banner upload handling
+let uploadedBannerUrl = null;
+
+async function handleBannerUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+        showToast('Please upload a valid image file (JPEG, PNG, GIF, or WebP)', 'error');
+        e.target.value = '';
+        return;
+    }
+    
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+        showToast('File size must be less than 5MB', 'error');
+        e.target.value = '';
+        return;
+    }
+    
+    // Show preview
+    const preview = document.getElementById('bannerPreview');
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        preview.innerHTML = `<img src="${event.target.result}" alt="Banner preview">`;
+    };
+    reader.readAsDataURL(file);
+    
+    // Upload file
+    try {
+        showToast('Uploading banner...', 'info');
+        const result = await ADMIN_API.uploadBanner(file);
+        uploadedBannerUrl = result.url;
+        document.getElementById('tournamentBanner').value = uploadedBannerUrl;
+        showToast('Banner uploaded successfully', 'success');
+    } catch (error) {
+        console.error('Banner upload error:', error);
+        showToast('Failed to upload banner', 'error');
+        preview.innerHTML = '<span>Banner Preview</span>';
+        e.target.value = '';
+    }
+}
+
+function handleBannerUrlInput(e) {
+    const url = e.target.value;
+    const preview = document.getElementById('bannerPreview');
+    
+    if (url) {
+        preview.innerHTML = `<img src="${url}" alt="Banner preview" onerror="this.parentElement.innerHTML='<span>Invalid image URL</span>'">`;
+    } else {
+        preview.innerHTML = '<span>Banner Preview</span>';
+    }
+}
+
 async function loadTournaments() {
     try {
         const status = document.getElementById('tournamentStatusFilter').value;
@@ -587,6 +672,10 @@ async function loadTournaments() {
 function openTournamentModal(tournament = null) {
     const form = document.getElementById('tournamentForm');
     form.reset();
+    uploadedBannerUrl = null;
+    
+    const preview = document.getElementById('bannerPreview');
+    document.getElementById('tournamentBannerFile').value = '';
     
     if (tournament) {
         document.getElementById('tournamentModalTitle').textContent = 'Edit Tournament';
@@ -607,6 +696,13 @@ function openTournamentModal(tournament = null) {
         document.getElementById('tournamentRoomPassword').value = tournament.room_password || '';
         document.getElementById('tournamentRules').value = tournament.rules || '';
         
+        // Show banner preview if URL exists
+        if (tournament.banner_url) {
+            preview.innerHTML = `<img src="${tournament.banner_url}" alt="Banner preview" onerror="this.parentElement.innerHTML='<span>Invalid image URL</span>'">`;
+        } else {
+            preview.innerHTML = '<span>Banner Preview</span>';
+        }
+        
         if (tournament.start_date) {
             document.getElementById('tournamentStartDate').value = tournament.start_date.slice(0, 16);
         }
@@ -622,6 +718,7 @@ function openTournamentModal(tournament = null) {
     } else {
         document.getElementById('tournamentModalTitle').textContent = 'Create Tournament';
         document.getElementById('tournamentId').value = '';
+        preview.innerHTML = '<span>Banner Preview</span>';
     }
     
     document.getElementById('tournamentModal').classList.remove('hidden');
