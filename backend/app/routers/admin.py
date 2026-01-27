@@ -2,7 +2,7 @@
 Admin Router - Admin panel API endpoints
 Handles admin authentication, dashboard stats, and CRUD operations
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Header
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime, timedelta
@@ -114,7 +114,7 @@ def verify_admin_token(token: str) -> dict:
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-def get_current_admin(authorization: str = None, db: Session = Depends(get_db)) -> AdminUser:
+def get_current_admin(authorization: str = Header(None), db: Session = Depends(get_db)) -> AdminUser:
     """Dependency to get current admin from token"""
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Missing authorization header")
@@ -236,7 +236,7 @@ async def reset_password(request: PasswordResetConfirm, db: Session = Depends(ge
 
 @router.get("/auth/me")
 async def get_admin_profile(
-    authorization: str = None,
+    authorization: str = Header(None),
     db: Session = Depends(get_db)
 ):
     """Get current admin profile"""
@@ -249,7 +249,7 @@ async def get_admin_profile(
 
 @router.get("/dashboard/stats")
 async def get_dashboard_stats(
-    authorization: str = None,
+    authorization: str = Header(None),
     db: Session = Depends(get_db)
 ):
     """Get overview statistics for dashboard"""
@@ -325,7 +325,7 @@ async def get_dashboard_stats(
 
 @router.get("/users")
 async def list_users(
-    authorization: str = None,
+    authorization: str = Header(None),
     skip: int = 0,
     limit: int = 50,
     search: Optional[str] = None,
@@ -362,7 +362,7 @@ async def list_users(
 @router.get("/users/{user_id}")
 async def get_user_details(
     user_id: str,
-    authorization: str = None,
+    authorization: str = Header(None),
     db: Session = Depends(get_db)
 ):
     """Get detailed user information"""
@@ -386,7 +386,7 @@ async def get_user_details(
 @router.put("/users/{user_id}/block")
 async def block_user(
     user_id: str,
-    authorization: str = None,
+    authorization: str = Header(None),
     db: Session = Depends(get_db)
 ):
     """Block a user"""
@@ -404,7 +404,7 @@ async def block_user(
 @router.put("/users/{user_id}/unblock")
 async def unblock_user(
     user_id: str,
-    authorization: str = None,
+    authorization: str = Header(None),
     db: Session = Depends(get_db)
 ):
     """Unblock a user"""
@@ -425,7 +425,7 @@ async def unblock_user(
 
 @router.get("/wallets")
 async def list_wallets(
-    authorization: str = None,
+    authorization: str = Header(None),
     skip: int = 0,
     limit: int = 50,
     db: Session = Depends(get_db)
@@ -454,7 +454,7 @@ async def add_tokens_to_wallet(
     amount: int,
     token_type: str = "virtual",  # virtual or reward
     reason: str = "Admin adjustment",
-    authorization: str = None,
+    authorization: str = Header(None),
     db: Session = Depends(get_db)
 ):
     """Manually add tokens to a user's wallet"""
@@ -491,7 +491,7 @@ async def add_tokens_to_wallet(
 
 @router.get("/tournaments")
 async def list_tournaments_admin(
-    authorization: str = None,
+    authorization: str = Header(None),
     skip: int = 0,
     limit: int = 50,
     status: Optional[str] = None,
@@ -519,7 +519,7 @@ async def list_tournaments_admin(
 @router.post("/tournaments")
 async def create_tournament(
     request: TournamentCreateRequest,
-    authorization: str = None,
+    authorization: str = Header(None),
     db: Session = Depends(get_db)
 ):
     """Create a new tournament"""
@@ -565,7 +565,7 @@ async def create_tournament(
 @router.get("/tournaments/{tournament_id}")
 async def get_tournament_admin(
     tournament_id: str,
-    authorization: str = None,
+    authorization: str = Header(None),
     db: Session = Depends(get_db)
 ):
     """Get tournament details including registrations"""
@@ -588,7 +588,7 @@ async def get_tournament_admin(
 async def update_tournament(
     tournament_id: str,
     request: TournamentUpdateRequest,
-    authorization: str = None,
+    authorization: str = Header(None),
     db: Session = Depends(get_db)
 ):
     """Update tournament details"""
@@ -614,7 +614,7 @@ async def update_tournament(
 @router.delete("/tournaments/{tournament_id}")
 async def delete_tournament(
     tournament_id: str,
-    authorization: str = None,
+    authorization: str = Header(None),
     db: Session = Depends(get_db)
 ):
     """Delete a tournament (soft delete by setting status to cancelled)"""
@@ -641,7 +641,7 @@ async def delete_tournament(
 async def complete_tournament(
     tournament_id: str,
     winners: Optional[dict] = None,  # {"1st": user_id, "2nd": user_id, "3rd": user_id}
-    authorization: str = None,
+    authorization: str = Header(None),
     db: Session = Depends(get_db)
 ):
     """Mark tournament as completed and distribute rewards"""
@@ -699,7 +699,7 @@ async def complete_tournament(
 
 @router.get("/transactions")
 async def list_transactions(
-    authorization: str = None,
+    authorization: str = Header(None),
     skip: int = 0,
     limit: int = 50,
     status: Optional[str] = None,
@@ -726,7 +726,7 @@ async def list_transactions(
 
 @router.get("/transactions/stats")
 async def get_transaction_stats(
-    authorization: str = None,
+    authorization: str = Header(None),
     db: Session = Depends(get_db)
 ):
     """Get transaction statistics"""
@@ -762,7 +762,7 @@ async def get_transaction_stats(
 
 @router.get("/rewards/leaderboard")
 async def get_rewards_leaderboard(
-    authorization: str = None,
+    authorization: str = Header(None),
     limit: int = 20,
     db: Session = Depends(get_db)
 ):
@@ -788,7 +788,7 @@ async def get_rewards_leaderboard(
 
 @router.get("/rewards/stats")
 async def get_rewards_stats(
-    authorization: str = None,
+    authorization: str = Header(None),
     db: Session = Depends(get_db)
 ):
     """Get reward distribution statistics"""
