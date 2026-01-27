@@ -96,7 +96,23 @@
         const token = urlParams.get('token');
         if (token) {
             localStorage.setItem('gan_token', token);
-            window.location.href = 'profile.html';
+            // Check if user profile is complete before redirecting
+            (async () => {
+                try {
+                    const response = await fetch(API_BASE_URL + '/api/auth/me', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const user = await response.json();
+                    if (user && user.profile_completed) {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        window.location.href = 'profile.html';
+                    }
+                } catch (error) {
+                    // On error, default to profile page
+                    window.location.href = 'profile.html';
+                }
+            })();
         }
     </script>
 </body>
