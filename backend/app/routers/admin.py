@@ -348,7 +348,7 @@ async def list_users(
         if search_by == "email":
             query = query.filter(User.email.ilike(f"%{search}%"))
         elif search_by == "phone":
-            query = query.filter(User.phone_number.ilike(f"%{search}%"))
+            query = query.filter(User.whatsapp_number.ilike(f"%{search}%"))
         elif search_by == "whatsapp":
             query = query.filter(User.whatsapp_number.ilike(f"%{search}%"))
         elif search_by == "player_id":
@@ -361,7 +361,6 @@ async def list_users(
                 (User.email.ilike(f"%{search}%")) |
                 (User.full_name.ilike(f"%{search}%")) |
                 (User.player_id.ilike(f"%{search}%")) |
-                (User.phone_number.ilike(f"%{search}%")) |
                 (User.whatsapp_number.ilike(f"%{search}%"))
             )
     
