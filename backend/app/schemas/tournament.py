@@ -23,6 +23,8 @@ class TournamentCreate(TournamentBase):
     first_place_reward: int = 0
     second_place_reward: int = 0
     third_place_reward: int = 0
+    fourth_place_reward: int = 0
+    fifth_place_reward: int = 0
     max_participants: int = 100
     min_participants: int = 2
     registration_start: Optional[datetime] = None
@@ -58,6 +60,8 @@ class TournamentResponse(BaseModel):
     first_place_reward: int
     second_place_reward: int
     third_place_reward: int
+    fourth_place_reward: int = 0
+    fifth_place_reward: int = 0
     max_participants: int
     current_participants: int
     slots_available: int

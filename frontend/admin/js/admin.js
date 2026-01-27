@@ -688,12 +688,12 @@ function openTournamentModal(tournament = null) {
         document.getElementById('tournament1stReward').value = tournament.first_place_reward;
         document.getElementById('tournament2ndReward').value = tournament.second_place_reward;
         document.getElementById('tournament3rdReward').value = tournament.third_place_reward;
+        document.getElementById('tournament4thReward').value = tournament.fourth_place_reward || 0;
+        document.getElementById('tournament5thReward').value = tournament.fifth_place_reward || 0;
         document.getElementById('tournamentMaxParticipants').value = tournament.max_participants;
         document.getElementById('tournamentMinParticipants').value = tournament.min_participants;
         document.getElementById('tournamentStatus').value = tournament.status;
         document.getElementById('tournamentBanner').value = tournament.banner_url || '';
-        document.getElementById('tournamentRoomId').value = tournament.room_id || '';
-        document.getElementById('tournamentRoomPassword').value = tournament.room_password || '';
         document.getElementById('tournamentRules').value = tournament.rules || '';
         
         // Show banner preview if URL exists
@@ -751,12 +751,12 @@ async function handleTournamentSubmit(e) {
         first_place_reward: parseInt(document.getElementById('tournament1stReward').value) || 0,
         second_place_reward: parseInt(document.getElementById('tournament2ndReward').value) || 0,
         third_place_reward: parseInt(document.getElementById('tournament3rdReward').value) || 0,
+        fourth_place_reward: parseInt(document.getElementById('tournament4thReward').value) || 0,
+        fifth_place_reward: parseInt(document.getElementById('tournament5thReward').value) || 0,
         max_participants: parseInt(document.getElementById('tournamentMaxParticipants').value) || 100,
         min_participants: parseInt(document.getElementById('tournamentMinParticipants').value) || 2,
         status: document.getElementById('tournamentStatus').value,
         banner_url: document.getElementById('tournamentBanner').value || null,
-        room_id: document.getElementById('tournamentRoomId').value || null,
-        room_password: document.getElementById('tournamentRoomPassword').value || null,
         rules: document.getElementById('tournamentRules').value || null,
         start_date: document.getElementById('tournamentStartDate').value || null,
         end_date: document.getElementById('tournamentEndDate').value || null,

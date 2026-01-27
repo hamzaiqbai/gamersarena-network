@@ -63,6 +63,8 @@ class TournamentCreateRequest(BaseModel):
     first_place_reward: int = 0
     second_place_reward: int = 0
     third_place_reward: int = 0
+    fourth_place_reward: int = 0
+    fifth_place_reward: int = 0
     max_participants: int = 100
     min_participants: int = 2
     registration_start: Optional[datetime] = None
@@ -71,8 +73,6 @@ class TournamentCreateRequest(BaseModel):
     end_date: Optional[datetime] = None
     status: str = "upcoming"
     banner_url: Optional[str] = None
-    room_id: Optional[str] = None
-    room_password: Optional[str] = None
 
 class TournamentUpdateRequest(BaseModel):
     title: Optional[str] = None
@@ -84,6 +84,8 @@ class TournamentUpdateRequest(BaseModel):
     first_place_reward: Optional[int] = None
     second_place_reward: Optional[int] = None
     third_place_reward: Optional[int] = None
+    fourth_place_reward: Optional[int] = None
+    fifth_place_reward: Optional[int] = None
     max_participants: Optional[int] = None
     status: Optional[str] = None
     registration_start: Optional[datetime] = None
@@ -91,8 +93,6 @@ class TournamentUpdateRequest(BaseModel):
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
     banner_url: Optional[str] = None
-    room_id: Optional[str] = None
-    room_password: Optional[str] = None
 
 # ============================================================
 # Helper Functions
@@ -623,6 +623,8 @@ async def create_tournament(
         first_place_reward=request.first_place_reward,
         second_place_reward=request.second_place_reward,
         third_place_reward=request.third_place_reward,
+        fourth_place_reward=request.fourth_place_reward,
+        fifth_place_reward=request.fifth_place_reward,
         max_participants=request.max_participants,
         min_participants=request.min_participants,
         registration_start=request.registration_start,
@@ -630,9 +632,7 @@ async def create_tournament(
         start_date=request.start_date,
         end_date=request.end_date,
         status=request.status,
-        banner_url=request.banner_url,
-        room_id=request.room_id,
-        room_password=request.room_password
+        banner_url=request.banner_url
     )
     
     db.add(tournament)
@@ -740,7 +740,9 @@ async def complete_tournament(
         rewards = {
             "1st": tournament.first_place_reward,
             "2nd": tournament.second_place_reward,
-            "3rd": tournament.third_place_reward
+            "3rd": tournament.third_place_reward,
+            "4th": tournament.fourth_place_reward,
+            "5th": tournament.fifth_place_reward
         }
         
         for place, user_id in winners.items():

@@ -48,6 +48,8 @@ class Tournament(Base):
     first_place_reward = Column(Integer, default=0)
     second_place_reward = Column(Integer, default=0)
     third_place_reward = Column(Integer, default=0)
+    fourth_place_reward = Column(Integer, default=0)
+    fifth_place_reward = Column(Integer, default=0)
     
     # Participants
     max_participants = Column(Integer, default=100)
@@ -114,6 +116,8 @@ class Tournament(Base):
             "first_place_reward": self.first_place_reward,
             "second_place_reward": self.second_place_reward,
             "third_place_reward": self.third_place_reward,
+            "fourth_place_reward": self.fourth_place_reward,
+            "fifth_place_reward": self.fifth_place_reward,
             "max_participants": self.max_participants,
             "current_participants": self.current_participants,
             "slots_available": self.slots_available,

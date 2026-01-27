@@ -87,5 +87,6 @@ class User(Base):
             "preferred_game": self.preferred_game,
             "preferred_payment": self.preferred_payment,
             "profile_completed": self.profile_completed,
+            "is_active": self.is_active,
             "created_at": self.created_at.isoformat() if self.created_at else None
         }
