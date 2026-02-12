@@ -76,32 +76,40 @@ async function showDashboard() {
 
 function setupEventListeners() {
     // Login form
-    document.getElementById('loginForm').addEventListener('submit', handleLogin);
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) loginForm.addEventListener('submit', handleLogin);
     
     // Setup form
-    document.getElementById('setupForm').addEventListener('submit', handleSetup);
+    const setupForm = document.getElementById('setupForm');
+    if (setupForm) setupForm.addEventListener('submit', handleSetup);
     
     // Reset form
-    document.getElementById('resetForm').addEventListener('submit', handlePasswordReset);
+    const resetForm = document.getElementById('resetForm');
+    if (resetForm) resetForm.addEventListener('submit', handlePasswordReset);
     
     // Forgot password link
-    document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
-        e.preventDefault();
-        document.getElementById('loginForm').classList.add('hidden');
-        document.getElementById('resetForm').classList.remove('hidden');
-    });
+    const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+    if (forgotPasswordLink) {
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('resetForm').classList.remove('hidden');
+        });
+    }
     
     // Back to login
-    document.getElementById('backToLogin').addEventListener('click', (e) => {
-        e.preventDefault();
-        document.getElementById('resetForm').classList.add('hidden');
-        document.getElementById('loginForm').classList.remove('hidden');
-    });
+    const backToLogin = document.getElementById('backToLogin');
+    if (backToLogin) {
+        backToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('resetForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+        });
+    }
     
     // Logout
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-        ADMIN_API.logout();
-    });
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) logoutBtn.addEventListener('click', () => ADMIN_API.logout());
     
     // Tab navigation
     document.querySelectorAll('.nav-item').forEach(item => {
@@ -113,47 +121,68 @@ function setupEventListeners() {
     });
     
     // Tournament form
-    document.getElementById('createTournamentBtn').addEventListener('click', () => {
-        openTournamentModal();
-    });
+    const createTournamentBtn = document.getElementById('createTournamentBtn');
+    if (createTournamentBtn) createTournamentBtn.addEventListener('click', () => openTournamentModal());
     
-    document.getElementById('tournamentForm').addEventListener('submit', handleTournamentSubmit);
+    const tournamentForm = document.getElementById('tournamentForm');
+    if (tournamentForm) tournamentForm.addEventListener('submit', handleTournamentSubmit);
     
     // Add tokens form
-    document.getElementById('addTokensForm').addEventListener('submit', handleAddTokens);
+    const addTokensForm = document.getElementById('addTokensForm');
+    if (addTokensForm) addTokensForm.addEventListener('submit', handleAddTokens);
     
     // User search
-    document.getElementById('userSearch').addEventListener('input', debounce(() => {
-        usersPage = 0;
-        loadUsers();
-    }, 300));
+    const userSearch = document.getElementById('userSearch');
+    if (userSearch) {
+        userSearch.addEventListener('input', debounce(() => {
+            usersPage = 0;
+            loadUsers();
+        }, 300));
+    }
     
-    document.getElementById('userSearchBy').addEventListener('change', () => {
-        usersPage = 0;
-        loadUsers();
-    });
+    const userSearchBy = document.getElementById('userSearchBy');
+    if (userSearchBy) {
+        userSearchBy.addEventListener('change', () => {
+            usersPage = 0;
+            loadUsers();
+        });
+    }
     
-    document.getElementById('userStatusFilter').addEventListener('change', () => {
-        usersPage = 0;
-        loadUsers();
-    });
+    const userStatusFilter = document.getElementById('userStatusFilter');
+    if (userStatusFilter) {
+        userStatusFilter.addEventListener('change', () => {
+            usersPage = 0;
+            loadUsers();
+        });
+    }
     
     // Tournament filters
-    document.getElementById('tournamentStatusFilter').addEventListener('change', loadTournaments);
-    document.getElementById('tournamentGameFilter').addEventListener('change', loadTournaments);
+    const tournamentStatusFilter = document.getElementById('tournamentStatusFilter');
+    if (tournamentStatusFilter) tournamentStatusFilter.addEventListener('change', loadTournaments);
+    
+    const tournamentGameFilter = document.getElementById('tournamentGameFilter');
+    if (tournamentGameFilter) tournamentGameFilter.addEventListener('change', loadTournaments);
     
     // Banner upload
-    document.getElementById('tournamentBannerFile').addEventListener('change', handleBannerUpload);
+    const tournamentBannerFile = document.getElementById('tournamentBannerFile');
+    if (tournamentBannerFile) tournamentBannerFile.addEventListener('change', handleBannerUpload);
     
     // Transaction filters
-    document.getElementById('transactionStatusFilter').addEventListener('change', () => {
-        transactionsPage = 0;
-        loadTransactions();
-    });
-    document.getElementById('transactionTypeFilter').addEventListener('change', () => {
-        transactionsPage = 0;
-        loadTransactions();
-    });
+    const transactionStatusFilter = document.getElementById('transactionStatusFilter');
+    if (transactionStatusFilter) {
+        transactionStatusFilter.addEventListener('change', () => {
+            transactionsPage = 0;
+            loadTransactions();
+        });
+    }
+    
+    const transactionTypeFilter = document.getElementById('transactionTypeFilter');
+    if (transactionTypeFilter) {
+        transactionTypeFilter.addEventListener('change', () => {
+            transactionsPage = 0;
+            loadTransactions();
+        });
+    }
 }
 
 // ==================== Auth Handlers ====================
@@ -1362,13 +1391,23 @@ async function saveMaintenanceSettings() {
 document.addEventListener('DOMContentLoaded', () => {
     // Only run if on admin page with maintenance elements
     const maintenanceEnabled = document.getElementById('maintenanceEnabled');
+    const maintenanceTitle = document.getElementById('maintenanceTitle');
+    const maintenanceMessage = document.getElementById('maintenanceMessage');
+    const maintenanceEndTime = document.getElementById('maintenanceEndTime');
+    
     if (maintenanceEnabled) {
         maintenanceEnabled.addEventListener('change', () => {
             updateMaintenanceUI(maintenanceEnabled.checked);
         });
-        
-        document.getElementById('maintenanceTitle').addEventListener('input', updatePreview);
-        document.getElementById('maintenanceMessage').addEventListener('input', updatePreview);
-        document.getElementById('maintenanceEndTime').addEventListener('change', updatePreview);
+    }
+    
+    if (maintenanceTitle) {
+        maintenanceTitle.addEventListener('input', updatePreview);
+    }
+    if (maintenanceMessage) {
+        maintenanceMessage.addEventListener('input', updatePreview);
+    }
+    if (maintenanceEndTime) {
+        maintenanceEndTime.addEventListener('change', updatePreview);
     }
 });
