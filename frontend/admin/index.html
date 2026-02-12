@@ -119,6 +119,10 @@
                     <i class="fas fa-trophy"></i>
                     <span>Tournaments</span>
                 </a>
+                <a href="#" class="nav-item" data-tab="subscriptions">
+                    <i class="fas fa-gem"></i>
+                    <span>Subscriptions & Tokens</span>
+                </a>
                 <a href="#" class="nav-item" data-tab="payments">
                     <i class="fas fa-credit-card"></i>
                     <span>Payments</span>
@@ -349,6 +353,156 @@
                 </div>
                 
                 <div id="tournamentsGrid" class="tournaments-grid">
+                </div>
+            </div>
+
+            <!-- Subscriptions & Game Tokens Tab -->
+            <div id="subscriptionsTab" class="tab-content hidden">
+                <div class="page-header">
+                    <h1>Subscriptions & Game Tokens</h1>
+                    <div class="header-actions">
+                        <button id="addProductBtn" class="btn-primary">
+                            <i class="fas fa-plus"></i> Add Product
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="product-filters">
+                    <select id="productTypeFilter" class="filter-select">
+                        <option value="">All Types</option>
+                        <option value="subscription">Subscriptions</option>
+                        <option value="game_token">Game Tokens</option>
+                    </select>
+                    <select id="productStatusFilter" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                
+                <div id="productsGrid" class="products-grid">
+                </div>
+            </div>
+
+            <!-- Product Modal -->
+            <div id="productModal" class="modal hidden">
+                <div class="modal-content modal-lg">
+                    <div class="modal-header">
+                        <h2 id="productModalTitle">Add Product</h2>
+                        <button class="close-btn" onclick="closeProductModal()">&times;</button>
+                    </div>
+                    <form id="productForm" class="modal-body">
+                        <!-- Step 1: Select Product Type -->
+                        <div id="productTypeStep" class="product-step">
+                            <h3>Select Product Type</h3>
+                            <div class="product-type-cards">
+                                <div class="product-type-card" data-type="subscription">
+                                    <i class="fas fa-crown"></i>
+                                    <h4>Subscription</h4>
+                                    <p>Royal Pass, Booyah Pass, etc.</p>
+                                </div>
+                                <div class="product-type-card" data-type="game_token">
+                                    <i class="fas fa-coins"></i>
+                                    <h4>Game Tokens</h4>
+                                    <p>UC, Diamonds, etc.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Select Category -->
+                        <div id="productCategoryStep" class="product-step hidden">
+                            <h3>Select Category</h3>
+                            <button type="button" class="back-btn" onclick="goToProductStep(1)">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            
+                            <!-- Subscription Categories -->
+                            <div id="subscriptionCategories" class="category-cards hidden">
+                                <div class="category-card" data-category="pubg_royal_pass">
+                                    <img src="https://via.placeholder.com/60x60?text=RP" alt="Royal Pass">
+                                    <h4>PUBG Royal Pass</h4>
+                                </div>
+                                <div class="category-card" data-category="pubg_royal_pass_elite">
+                                    <img src="https://via.placeholder.com/60x60?text=RPE" alt="Royal Pass Elite">
+                                    <h4>Royal Pass Elite</h4>
+                                </div>
+                                <div class="category-card" data-category="freefire_booyah_pass">
+                                    <img src="https://via.placeholder.com/60x60?text=BP" alt="Booyah Pass">
+                                    <h4>Free Fire Booyah Pass</h4>
+                                </div>
+                                <div class="category-card" data-category="freefire_booyah_pass_pro">
+                                    <img src="https://via.placeholder.com/60x60?text=BPP" alt="Booyah Pass Pro">
+                                    <h4>Booyah Pass Pro</h4>
+                                </div>
+                            </div>
+                            
+                            <!-- Game Token Categories -->
+                            <div id="gameTokenCategories" class="category-cards hidden">
+                                <div class="category-card" data-category="pubg_uc">
+                                    <img src="https://via.placeholder.com/60x60?text=UC" alt="PUBG UC">
+                                    <h4>PUBG UC</h4>
+                                </div>
+                                <div class="category-card" data-category="freefire_diamond">
+                                    <img src="https://via.placeholder.com/60x60?text=💎" alt="Free Fire Diamond">
+                                    <h4>Free Fire Diamond</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Product Details -->
+                        <div id="productDetailsStep" class="product-step hidden">
+                            <h3>Product Details</h3>
+                            <button type="button" class="back-btn" onclick="goToProductStep(2)">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+
+                            <input type="hidden" id="productId">
+                            <input type="hidden" id="selectedProductType">
+                            <input type="hidden" id="selectedCategory">
+
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label for="productName">Product Name *</label>
+                                    <input type="text" id="productName" required placeholder="e.g., Royal Pass Season 20">
+                                </div>
+                                
+                                <div class="form-group full-width">
+                                    <label for="productDescription">Description</label>
+                                    <textarea id="productDescription" rows="2" placeholder="Optional description"></textarea>
+                                </div>
+                                
+                                <div class="form-group" id="tokenPriceGroup">
+                                    <label for="productTokenPrice">Subscribe for (Tokens) *</label>
+                                    <input type="number" id="productTokenPrice" required min="1" placeholder="100">
+                                </div>
+                                
+                                <div class="form-group hidden" id="tokenAmountGroup">
+                                    <label id="tokenAmountLabel">Amount of UC *</label>
+                                    <input type="number" id="productTokenAmount" min="1" placeholder="60">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="productValidity">Validity *</label>
+                                    <select id="productValidity" required>
+                                        <option value="current_season">Current Season</option>
+                                        <option value="current_event">Current Event</option>
+                                        <option value="lifetime">Lifetime</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group full-width">
+                                    <label for="productBannerFile">Upload Image</label>
+                                    <input type="file" id="productBannerFile" accept="image/*">
+                                    <div id="productBannerPreview" class="banner-preview"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="modal-footer">
+                                <button type="button" class="btn-secondary" onclick="closeProductModal()">Cancel</button>
+                                <button type="submit" class="btn-primary">Save Product</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
 

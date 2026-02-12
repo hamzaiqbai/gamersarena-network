@@ -1187,3 +1187,256 @@ input:checked + .slider:before {
         grid-template-columns: 1fr;
     }
 }
+
+/* Products / Subscriptions & Tokens */
+.product-filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.product-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(138, 43, 226, 0.2);
+}
+
+.product-banner {
+    height: 140px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.product-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-banner i {
+    font-size: 40px;
+    color: rgba(255,255,255,0.6);
+}
+
+.product-type-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.product-type-badge.subscription {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.product-type-badge.game_token {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.product-info {
+    padding: 16px;
+}
+
+.product-info h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.product-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 12px;
+}
+
+.product-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-secondary);
+}
+
+.product-price {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--dark-bg);
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.product-price i {
+    color: var(--warning);
+}
+
+.product-price span {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-light);
+}
+
+.product-price small {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.product-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.product-actions .action-btn {
+    flex: 1;
+    padding: 8px;
+    font-size: 12px;
+}
+
+/* Product Modal Steps */
+.product-step {
+    min-height: 300px;
+}
+
+.product-step h3 {
+    margin-bottom: 16px;
+    font-size: 18px;
+}
+
+.back-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+}
+
+.back-btn:hover {
+    color: var(--text-primary);
+}
+
+.product-type-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.product-type-card {
+    background: var(--dark-bg);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 32px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.product-type-card:hover {
+    background: var(--card-hover);
+    border-color: var(--primary);
+}
+
+.product-type-card.selected {
+    border-color: var(--primary);
+    background: rgba(138, 43, 226, 0.1);
+}
+
+.product-type-card i {
+    font-size: 40px;
+    color: var(--primary-light);
+    margin-bottom: 16px;
+}
+
+.product-type-card h4 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.product-type-card p {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.category-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.category-card {
+    background: var(--dark-bg);
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 20px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.category-card:hover {
+    background: var(--card-hover);
+    border-color: var(--primary);
+}
+
+.category-card.selected {
+    border-color: var(--primary);
+    background: rgba(138, 43, 226, 0.1);
+}
+
+.category-card img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-bottom: 12px;
+}
+
+.category-card h4 {
+    font-size: 14px;
+}
+
+/* Status badge for products */
+.status-inactive {
+    opacity: 0.6;
+}
+
+.badge-active {
+    background: var(--success);
+}
+
+.badge-inactive {
+    background: var(--text-secondary);
+}
+
+/* Prize badge for 4th and 5th place */
+.prize-badge.fourth,
+.prize-badge.fifth {
+    background: linear-gradient(135deg, #606060 0%, #808080 100%);
+}

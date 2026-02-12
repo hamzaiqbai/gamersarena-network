@@ -248,10 +248,43 @@ const ADMIN_API = {
         return await this.request('/api/admin/rewards/stats');
     },
     
-    // ==================== Maintenance ====================
+    // ==================== Products (Subscriptions & Tokens) ====================
     
-    async getMaintenanceSettings() {
-        return await this.request('/api/admin/maintenance');
+    async getProducts(params = {}) {
+        const query = new URLSearchParams();
+        if (params.product_type) query.append('product_type', params.product_type);
+        if (params.status) query.append('status', params.status);
+        return await this.request(`/api/admin/products?${query.toString()}`);
+    },
+    
+    async getProduct(productId) {
+        return await this.request(`/api/admin/products/${productId}`);
+    },
+    
+    async createProduct(productData) {
+        return await this.request('/api/admin/products', {
+            method: 'POST',
+            body: JSON.stringify(productData)
+        });
+    },
+    
+    async updateProduct(productId, productData) {
+        return await this.request(`/api/admin/products/${productId}`, {
+            method: 'PUT',
+            body: JSON.stringify(productData)
+        });
+    },
+    
+    async deleteProduct(productId) {
+        return await this.request(`/api/admin/products/${productId}`, {
+            method: 'DELETE'
+        });
+    },
+    
+    async getProductCategories() {
+        return await this.request('/api/admin/products/categories/all');
+    },
+
     },
     
     async updateMaintenanceSettings(settings) {

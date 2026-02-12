@@ -23,6 +23,7 @@ from ..models.tournament import Tournament, TokenBundle
 from ..models.transaction import Transaction
 from ..models.registration import Registration
 from ..models.settings import SiteSettings, MAINTENANCE_ENABLED, MAINTENANCE_END_TIME, MAINTENANCE_MESSAGE, MAINTENANCE_TITLE
+from ..models.product import Product, ProductType, ProductCategory, ProductValidity
 
 router = APIRouter(prefix="/api/admin", tags=["Admin"])
 
@@ -973,3 +974,195 @@ async def update_maintenance_settings(
         "enabled": request.enabled,
         "end_time": request.end_time.isoformat() if request.end_time else None
     }
+
+
+# ============================================================
+# Products (Subscriptions & Game Tokens) Endpoints
+# ============================================================
+
+class ProductCreateRequest(BaseModel):
+    product_type: str  # "subscription" or "game_token"
+    category: str  # e.g., "pubg_royal_pass", "pubg_uc", etc.
+    name: str
+    description: Optional[str] = None
+    token_price: int
+    token_amount: Optional[int] = None  # For game tokens
+    validity: str = "current_season"  # current_season, current_event, lifetime
+    banner_url: Optional[str] = None
+
+class ProductUpdateRequest(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    token_price: Optional[int] = None
+    token_amount: Optional[int] = None
+    validity: Optional[str] = None
+    banner_url: Optional[str] = None
+    is_active: Optional[str] = None
+
+
+@router.get("/products")
+async def get_products(
+    product_type: Optional[str] = None,
+    status: Optional[str] = None,
+    authorization: str = Header(None),
+    db: Session = Depends(get_db)
+):
+    """Get all products with optional filtering"""
+    get_current_admin(authorization, db)
+    
+    query = db.query(Product)
+    
+    if product_type:
+        query = query.filter(Product.product_type == product_type)
+    if status:
+        query = query.filter(Product.is_active == status)
+        
+    products = query.order_by(Product.created_at.desc()).all()
+    
+    return {
+        "products": [p.to_dict() for p in products],
+        "total": len(products)
+    }
+
+
+@router.post("/products")
+async def create_product(
+    request: ProductCreateRequest,
+    authorization: str = Header(None),
+    db: Session = Depends(get_db)
+):
+    """Create a new product (subscription or game token)"""
+    get_current_admin(authorization, db)
+    
+    try:
+        product_type = ProductType(request.product_type)
+        category = ProductCategory(request.category)
+        validity = ProductValidity(request.validity)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid enum value: {str(e)}")
+    
+    product = Product(
+        product_type=product_type,
+        category=category,
+        name=request.name,
+        description=request.description,
+        token_price=request.token_price,
+        token_amount=request.token_amount,
+        validity=validity,
+        banner_url=request.banner_url,
+        is_active="active"
+    )
+    
+    db.add(product)
+    db.commit()
+    db.refresh(product)
+    
+    return {
+        "message": "Product created successfully",
+        "product": product.to_dict()
+    }
+
+
+@router.get("/products/{product_id}")
+async def get_product(
+    product_id: str,
+    authorization: str = Header(None),
+    db: Session = Depends(get_db)
+):
+    """Get a single product by ID"""
+    get_current_admin(authorization, db)
+    
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    return {"product": product.to_dict()}
+
+
+@router.put("/products/{product_id}")
+async def update_product(
+    product_id: str,
+    request: ProductUpdateRequest,
+    authorization: str = Header(None),
+    db: Session = Depends(get_db)
+):
+    """Update a product"""
+    get_current_admin(authorization, db)
+    
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    if request.name is not None:
+        product.name = request.name
+    if request.description is not None:
+        product.description = request.description
+    if request.token_price is not None:
+        product.token_price = request.token_price
+    if request.token_amount is not None:
+        product.token_amount = request.token_amount
+    if request.validity is not None:
+        try:
+            product.validity = ProductValidity(request.validity)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid validity value")
+    if request.banner_url is not None:
+        product.banner_url = request.banner_url
+    if request.is_active is not None:
+        product.is_active = request.is_active
+    
+    db.commit()
+    db.refresh(product)
+    
+    return {
+        "message": "Product updated successfully",
+        "product": product.to_dict()
+    }
+
+
+@router.delete("/products/{product_id}")
+async def delete_product(
+    product_id: str,
+    authorization: str = Header(None),
+    db: Session = Depends(get_db)
+):
+    """Delete a product"""
+    get_current_admin(authorization, db)
+    
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    db.delete(product)
+    db.commit()
+    
+    return {"message": "Product deleted successfully"}
+
+
+# Product categories for frontend reference
+PRODUCT_CATEGORIES = {
+    "subscriptions": [
+        {"value": "pubg_royal_pass", "label": "PUBG Royal Pass", "game": "PUBG Mobile"},
+        {"value": "pubg_royal_pass_elite", "label": "Royal Pass Elite", "game": "PUBG Mobile"},
+        {"value": "freefire_booyah_pass", "label": "Free Fire Booyah Pass", "game": "Free Fire"},
+        {"value": "freefire_booyah_pass_pro", "label": "Free Fire Booyah Pass Pro", "game": "Free Fire"}
+    ],
+    "game_tokens": [
+        {"value": "pubg_uc", "label": "PUBG UC", "game": "PUBG Mobile", "unit": "UC"},
+        {"value": "freefire_diamond", "label": "Free Fire Diamond", "game": "Free Fire", "unit": "Diamond"}
+    ],
+    "validity_options": [
+        {"value": "current_season", "label": "Current Season"},
+        {"value": "current_event", "label": "Current Event"},
+        {"value": "lifetime", "label": "Lifetime"}
+    ]
+}
+
+@router.get("/products/categories/all")
+async def get_product_categories(
+    authorization: str = Header(None),
+    db: Session = Depends(get_db)
+):
+    """Get all product categories and options"""
+    get_current_admin(authorization, db)
+    return PRODUCT_CATEGORIES

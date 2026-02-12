@@ -247,6 +247,9 @@ function switchTab(tab) {
         case 'tournaments':
             loadTournaments();
             break;
+        case 'subscriptions':
+            loadProducts();
+            break;
         case 'payments':
             loadTransactions();
             break;
@@ -631,6 +634,8 @@ async function loadTournaments() {
                         <span class="prize-badge">🥇 ${t.first_place_reward}</span>
                         <span class="prize-badge">🥈 ${t.second_place_reward}</span>
                         <span class="prize-badge">🥉 ${t.third_place_reward}</span>
+                        <span class="prize-badge fourth">🏅 ${t.fourth_place_reward || 0}</span>
+                        <span class="prize-badge fifth">🏅 ${t.fifth_place_reward || 0}</span>
                     </div>
                     <div class="tournament-meta">
                         <span><i class="fas fa-calendar"></i> ${formatDate(t.start_date)}</span>
@@ -924,6 +929,345 @@ window.deleteTournament = deleteTournament;
 window.completeTournament = completeTournament;
 window.deleteUser = deleteUser;
 window.saveMaintenanceSettings = saveMaintenanceSettings;
+window.closeProductModal = closeProductModal;
+window.goToProductStep = goToProductStep;
+window.editProduct = editProduct;
+window.deleteProduct = deleteProduct;
+window.toggleProductStatus = toggleProductStatus;
+
+// ==================== Products (Subscriptions & Tokens) ====================
+
+let selectedProductType = null;
+let selectedCategory = null;
+let editingProductId = null;
+let uploadedProductBannerUrl = null;
+
+const CATEGORY_LABELS = {
+    'pubg_royal_pass': 'PUBG Royal Pass',
+    'pubg_royal_pass_elite': 'Royal Pass Elite',
+    'freefire_booyah_pass': 'Free Fire Booyah Pass',
+    'freefire_booyah_pass_pro': 'Booyah Pass Pro',
+    'pubg_uc': 'PUBG UC',
+    'freefire_diamond': 'Free Fire Diamond'
+};
+
+const VALIDITY_LABELS = {
+    'current_season': 'Current Season',
+    'current_event': 'Current Event',
+    'lifetime': 'Lifetime'
+};
+
+async function loadProducts() {
+    try {
+        const productType = document.getElementById('productTypeFilter').value;
+        const status = document.getElementById('productStatusFilter').value;
+        
+        const data = await ADMIN_API.getProducts({ product_type: productType, status });
+        
+        const html = data.products.map(p => `
+            <div class="product-card ${p.is_active === 'inactive' ? 'status-inactive' : ''}">
+                <div class="product-banner">
+                    ${p.banner_url 
+                        ? `<img src="${p.banner_url}" alt="${p.name}">`
+                        : `<i class="fas ${p.product_type === 'subscription' ? 'fa-crown' : 'fa-coins'}"></i>`
+                    }
+                    <span class="product-type-badge ${p.product_type}">${p.product_type === 'subscription' ? 'Subscription' : 'Game Token'}</span>
+                </div>
+                <div class="product-info">
+                    <h3>${p.name}</h3>
+                    <div class="product-meta">
+                        <span><i class="fas fa-tag"></i> ${CATEGORY_LABELS[p.category] || p.category}</span>
+                        <span><i class="fas fa-clock"></i> ${VALIDITY_LABELS[p.validity] || p.validity}</span>
+                    </div>
+                    ${p.product_type === 'game_token' && p.token_amount ? `
+                        <div class="product-meta">
+                            <span><i class="fas fa-gem"></i> ${p.token_amount} ${p.category === 'pubg_uc' ? 'UC' : 'Diamonds'}</span>
+                        </div>
+                    ` : ''}
+                    <div class="product-price">
+                        <i class="fas fa-coins"></i>
+                        <span>${p.token_price}</span>
+                        <small>tokens</small>
+                    </div>
+                    <div class="product-actions">
+                        <button class="action-btn edit" onclick="editProduct('${p.id}')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="action-btn ${p.is_active === 'active' ? 'view' : 'edit'}" onclick="toggleProductStatus('${p.id}', '${p.is_active}')">
+                            <i class="fas ${p.is_active === 'active' ? 'fa-eye-slash' : 'fa-eye'}"></i>
+                        </button>
+                        <button class="action-btn delete" onclick="deleteProduct('${p.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        document.getElementById('productsGrid').innerHTML = html || '<div class="empty-state"><i class="fas fa-gem"></i><p>No products found. Click "Add Product" to create one.</p></div>';
+        
+    } catch (error) {
+        console.error('Products load error:', error);
+        showToast('Failed to load products', 'error');
+    }
+}
+
+function openProductModal(product = null) {
+    editingProductId = product ? product.id : null;
+    selectedProductType = product ? product.product_type : null;
+    selectedCategory = product ? product.category : null;
+    uploadedProductBannerUrl = product ? product.banner_url : null;
+    
+    document.getElementById('productModalTitle').textContent = product ? 'Edit Product' : 'Add Product';
+    
+    // Reset all steps
+    document.getElementById('productTypeStep').classList.remove('hidden');
+    document.getElementById('productCategoryStep').classList.add('hidden');
+    document.getElementById('productDetailsStep').classList.add('hidden');
+    
+    // Reset selections
+    document.querySelectorAll('.product-type-card').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+    
+    // Reset form
+    document.getElementById('productForm').reset();
+    document.getElementById('productBannerPreview').innerHTML = '';
+    
+    if (product) {
+        // Go directly to details step for editing
+        selectedProductType = product.product_type;
+        selectedCategory = product.category;
+        goToProductStep(3);
+        
+        // Fill in details
+        document.getElementById('productId').value = product.id;
+        document.getElementById('selectedProductType').value = product.product_type;
+        document.getElementById('selectedCategory').value = product.category;
+        document.getElementById('productName').value = product.name;
+        document.getElementById('productDescription').value = product.description || '';
+        document.getElementById('productTokenPrice').value = product.token_price;
+        document.getElementById('productValidity').value = product.validity;
+        
+        if (product.product_type === 'game_token') {
+            document.getElementById('tokenAmountGroup').classList.remove('hidden');
+            document.getElementById('productTokenAmount').value = product.token_amount || '';
+            updateTokenAmountLabel(product.category);
+        }
+        
+        if (product.banner_url) {
+            document.getElementById('productBannerPreview').innerHTML = `<img src="${product.banner_url}" alt="Preview">`;
+        }
+    }
+    
+    document.getElementById('productModal').classList.remove('hidden');
+}
+
+function closeProductModal() {
+    document.getElementById('productModal').classList.add('hidden');
+    editingProductId = null;
+    selectedProductType = null;
+    selectedCategory = null;
+    uploadedProductBannerUrl = null;
+}
+
+function goToProductStep(step) {
+    document.getElementById('productTypeStep').classList.add('hidden');
+    document.getElementById('productCategoryStep').classList.add('hidden');
+    document.getElementById('productDetailsStep').classList.add('hidden');
+    
+    if (step === 1) {
+        document.getElementById('productTypeStep').classList.remove('hidden');
+    } else if (step === 2) {
+        document.getElementById('productCategoryStep').classList.remove('hidden');
+        
+        // Show correct category cards
+        if (selectedProductType === 'subscription') {
+            document.getElementById('subscriptionCategories').classList.remove('hidden');
+            document.getElementById('gameTokenCategories').classList.add('hidden');
+        } else {
+            document.getElementById('subscriptionCategories').classList.add('hidden');
+            document.getElementById('gameTokenCategories').classList.remove('hidden');
+        }
+    } else if (step === 3) {
+        document.getElementById('productDetailsStep').classList.remove('hidden');
+        document.getElementById('selectedProductType').value = selectedProductType;
+        document.getElementById('selectedCategory').value = selectedCategory;
+        
+        // Update labels based on type
+        if (selectedProductType === 'subscription') {
+            document.getElementById('tokenPriceGroup').querySelector('label').textContent = 'Subscribe for (Tokens) *';
+            document.getElementById('tokenAmountGroup').classList.add('hidden');
+            // Remove lifetime option for subscriptions
+            const validitySelect = document.getElementById('productValidity');
+            const lifetimeOption = validitySelect.querySelector('option[value="lifetime"]');
+            if (lifetimeOption) lifetimeOption.style.display = 'none';
+        } else {
+            document.getElementById('tokenPriceGroup').querySelector('label').textContent = 'Price (Tokens) *';
+            document.getElementById('tokenAmountGroup').classList.remove('hidden');
+            updateTokenAmountLabel(selectedCategory);
+            // Show all validity options for game tokens
+            const validitySelect = document.getElementById('productValidity');
+            const lifetimeOption = validitySelect.querySelector('option[value="lifetime"]');
+            if (lifetimeOption) lifetimeOption.style.display = '';
+        }
+    }
+}
+
+function updateTokenAmountLabel(category) {
+    const label = document.getElementById('tokenAmountLabel');
+    if (category === 'pubg_uc') {
+        label.textContent = 'Amount of UC *';
+    } else {
+        label.textContent = 'Amount of Diamonds *';
+    }
+}
+
+async function editProduct(productId) {
+    try {
+        const data = await ADMIN_API.getProduct(productId);
+        openProductModal(data.product);
+    } catch (error) {
+        console.error('Failed to load product:', error);
+        showToast('Failed to load product', 'error');
+    }
+}
+
+async function deleteProduct(productId) {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+    
+    try {
+        await ADMIN_API.deleteProduct(productId);
+        showToast('Product deleted successfully', 'success');
+        loadProducts();
+    } catch (error) {
+        console.error('Failed to delete product:', error);
+        showToast('Failed to delete product', 'error');
+    }
+}
+
+async function toggleProductStatus(productId, currentStatus) {
+    const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+    
+    try {
+        await ADMIN_API.updateProduct(productId, { is_active: newStatus });
+        showToast(`Product ${newStatus === 'active' ? 'activated' : 'deactivated'}`, 'success');
+        loadProducts();
+    } catch (error) {
+        console.error('Failed to update product status:', error);
+        showToast('Failed to update product status', 'error');
+    }
+}
+
+async function saveProduct(e) {
+    e.preventDefault();
+    
+    const productData = {
+        product_type: document.getElementById('selectedProductType').value,
+        category: document.getElementById('selectedCategory').value,
+        name: document.getElementById('productName').value,
+        description: document.getElementById('productDescription').value,
+        token_price: parseInt(document.getElementById('productTokenPrice').value),
+        validity: document.getElementById('productValidity').value,
+        banner_url: uploadedProductBannerUrl
+    };
+    
+    if (productData.product_type === 'game_token') {
+        productData.token_amount = parseInt(document.getElementById('productTokenAmount').value);
+    }
+    
+    try {
+        if (editingProductId) {
+            await ADMIN_API.updateProduct(editingProductId, productData);
+            showToast('Product updated successfully', 'success');
+        } else {
+            await ADMIN_API.createProduct(productData);
+            showToast('Product created successfully', 'success');
+        }
+        
+        closeProductModal();
+        loadProducts();
+    } catch (error) {
+        console.error('Failed to save product:', error);
+        showToast('Failed to save product', 'error');
+    }
+}
+
+// Setup product event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    // Product type selection
+    document.querySelectorAll('.product-type-card').forEach(card => {
+        card.addEventListener('click', () => {
+            document.querySelectorAll('.product-type-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedProductType = card.dataset.type;
+            goToProductStep(2);
+        });
+    });
+    
+    // Category selection
+    document.querySelectorAll('.category-card').forEach(card => {
+        card.addEventListener('click', () => {
+            document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            selectedCategory = card.dataset.category;
+            goToProductStep(3);
+        });
+    });
+    
+    // Add Product button
+    const addProductBtn = document.getElementById('addProductBtn');
+    if (addProductBtn) {
+        addProductBtn.addEventListener('click', () => openProductModal());
+    }
+    
+    // Product form submit
+    const productForm = document.getElementById('productForm');
+    if (productForm) {
+        productForm.addEventListener('submit', saveProduct);
+    }
+    
+    // Product filters
+    const productTypeFilter = document.getElementById('productTypeFilter');
+    const productStatusFilter = document.getElementById('productStatusFilter');
+    if (productTypeFilter) {
+        productTypeFilter.addEventListener('change', loadProducts);
+    }
+    if (productStatusFilter) {
+        productStatusFilter.addEventListener('change', loadProducts);
+    }
+    
+    // Product banner upload
+    const productBannerFile = document.getElementById('productBannerFile');
+    if (productBannerFile) {
+        productBannerFile.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                const response = await fetch(`${ADMIN_API.BASE_URL}/api/admin/tournaments/upload-banner`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${ADMIN_API.token}`
+                    },
+                    body: formData
+                });
+                
+                if (!response.ok) throw new Error('Upload failed');
+                
+                const result = await response.json();
+                uploadedProductBannerUrl = result.banner_url;
+                document.getElementById('productBannerPreview').innerHTML = `<img src="${result.banner_url}" alt="Preview">`;
+                showToast('Image uploaded successfully', 'success');
+            } catch (error) {
+                console.error('Upload error:', error);
+                showToast('Failed to upload image', 'error');
+            }
+        });
+    }
+});
 
 // ==================== Maintenance Mode ====================
 

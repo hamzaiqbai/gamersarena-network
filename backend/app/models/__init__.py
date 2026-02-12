@@ -6,6 +6,7 @@ from .transaction import Transaction
 from .registration import Registration
 from .admin import AdminUser
 from .settings import SiteSettings
+from .product import Product, ProductType, ProductCategory, ProductValidity
 
 __all__ = [
     "User",
@@ -15,5 +16,9 @@ __all__ = [
     "Transaction",
     "Registration",
     "AdminUser",
-    "SiteSettings"
+    "SiteSettings",
+    "Product",
+    "ProductType",
+    "ProductCategory",
+    "ProductValidity"
 ]
