@@ -285,6 +285,10 @@ const ADMIN_API = {
         return await this.request('/api/admin/products/categories/all');
     },
 
+    // ==================== Maintenance ====================
+    
+    async getMaintenanceSettings() {
+        return await this.request('/api/admin/maintenance');
     },
     
     async updateMaintenanceSettings(settings) {
