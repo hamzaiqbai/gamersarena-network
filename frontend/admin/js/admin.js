@@ -767,6 +767,9 @@ async function handleTournamentSubmit(e) {
     e.preventDefault();
     
     const tournamentId = document.getElementById('tournamentId').value;
+    const bannerValue = document.getElementById('tournamentBanner').value;
+    
+    console.log('Submitting tournament, banner_url:', bannerValue);
     
     const data = {
         title: document.getElementById('tournamentTitle').value,
@@ -782,13 +785,15 @@ async function handleTournamentSubmit(e) {
         max_participants: parseInt(document.getElementById('tournamentMaxParticipants').value) || 100,
         min_participants: parseInt(document.getElementById('tournamentMinParticipants').value) || 2,
         status: document.getElementById('tournamentStatus').value,
-        banner_url: document.getElementById('tournamentBanner').value || null,
+        banner_url: bannerValue || uploadedBannerUrl || null,
         rules: document.getElementById('tournamentRules').value || null,
         start_date: document.getElementById('tournamentStartDate').value || null,
         end_date: document.getElementById('tournamentEndDate').value || null,
         registration_start: document.getElementById('tournamentRegStart').value || null,
         registration_end: document.getElementById('tournamentRegEnd').value || null
     };
+    
+    console.log('Full tournament data:', data);
     
     try {
         if (tournamentId) {
