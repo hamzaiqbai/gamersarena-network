@@ -3,6 +3,7 @@ Admin Router - Admin panel API endpoints
 Handles admin authentication, dashboard stats, and CRUD operations
 """
 from fastapi import APIRouter, Depends, HTTPException, status, Header, UploadFile, File
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from datetime import datetime, timedelta
@@ -21,6 +22,7 @@ from ..models.wallet import Wallet
 from ..models.tournament import Tournament, TokenBundle
 from ..models.transaction import Transaction
 from ..models.registration import Registration
+from ..models.settings import SiteSettings, MAINTENANCE_ENABLED, MAINTENANCE_END_TIME, MAINTENANCE_MESSAGE, MAINTENANCE_TITLE
 
 router = APIRouter(prefix="/api/admin", tags=["Admin"])
 
@@ -588,14 +590,23 @@ async def upload_banner(
     with open(filepath, "wb") as f:
         f.write(contents)
     
-    # Return the URL path
-    banner_url = f"/uploads/banners/{filename}"
+    # Return the URL path (use API path so nginx proxies it)
+    banner_url = f"/api/admin/uploads/banners/{filename}"
     
     return {
         "message": "Banner uploaded successfully",
         "banner_url": banner_url,
         "filename": filename
     }
+
+# Route to serve banner images (public access)
+@router.get("/uploads/banners/{filename}", include_in_schema=False)
+async def serve_banner(filename: str):
+    """Serve banner image files"""
+    filepath = os.path.join(UPLOAD_DIR, filename)
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="Banner not found")
+    return FileResponse(filepath)
 
 @router.post("/tournaments")
 async def create_tournament(
@@ -896,4 +907,69 @@ async def get_rewards_stats(
             {"title": t.title, "prize_pool": t.prize_pool, "participants": t.participants}
             for t in top_tournaments
         ]
+    }
+
+# ============================================================
+# Maintenance Mode
+# ============================================================
+
+class MaintenanceSettingsRequest(BaseModel):
+    enabled: bool = False
+    end_time: Optional[datetime] = None
+    title: Optional[str] = "Under Maintenance"
+    message: Optional[str] = "We're performing scheduled maintenance. We'll be back soon!"
+
+def get_setting(db: Session, key: str) -> Optional[str]:
+    """Get a setting value by key"""
+    setting = db.query(SiteSettings).filter(SiteSettings.key == key).first()
+    return setting.value if setting else None
+
+def set_setting(db: Session, key: str, value: str):
+    """Set a setting value"""
+    setting = db.query(SiteSettings).filter(SiteSettings.key == key).first()
+    if setting:
+        setting.value = value
+    else:
+        setting = SiteSettings(key=key, value=value)
+        db.add(setting)
+    db.commit()
+
+@router.get("/maintenance")
+async def get_maintenance_settings(
+    authorization: str = Header(None),
+    db: Session = Depends(get_db)
+):
+    """Get current maintenance mode settings"""
+    get_current_admin(authorization, db)
+    
+    enabled = get_setting(db, MAINTENANCE_ENABLED)
+    end_time = get_setting(db, MAINTENANCE_END_TIME)
+    title = get_setting(db, MAINTENANCE_TITLE)
+    message = get_setting(db, MAINTENANCE_MESSAGE)
+    
+    return {
+        "enabled": enabled == "true" if enabled else False,
+        "end_time": end_time,
+        "title": title or "Under Maintenance",
+        "message": message or "We're performing scheduled maintenance. We'll be back soon!"
+    }
+
+@router.put("/maintenance")
+async def update_maintenance_settings(
+    request: MaintenanceSettingsRequest,
+    authorization: str = Header(None),
+    db: Session = Depends(get_db)
+):
+    """Update maintenance mode settings"""
+    get_current_admin(authorization, db)
+    
+    set_setting(db, MAINTENANCE_ENABLED, "true" if request.enabled else "false")
+    set_setting(db, MAINTENANCE_END_TIME, request.end_time.isoformat() if request.end_time else "")
+    set_setting(db, MAINTENANCE_TITLE, request.title or "Under Maintenance")
+    set_setting(db, MAINTENANCE_MESSAGE, request.message or "We're performing scheduled maintenance. We'll be back soon!")
+    
+    return {
+        "message": "Maintenance settings updated successfully",
+        "enabled": request.enabled,
+        "end_time": request.end_time.isoformat() if request.end_time else None
     }

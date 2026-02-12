@@ -5,6 +5,7 @@ from .tournament import Tournament, TokenBundle
 from .transaction import Transaction
 from .registration import Registration
 from .admin import AdminUser
+from .settings import SiteSettings
 
 __all__ = [
     "User",
@@ -13,5 +14,6 @@ __all__ = [
     "TokenBundle",
     "Transaction",
     "Registration",
-    "AdminUser"
+    "AdminUser",
+    "SiteSettings"
 ]

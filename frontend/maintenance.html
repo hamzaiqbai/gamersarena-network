@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAN - Under Maintenance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 50%, #0a0a1a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            overflow: hidden;
+        }
+        
+        .maintenance-container {
+            text-align: center;
+            padding: 40px;
+            max-width: 600px;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: #6366f1;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+        
+        .logo i {
+            font-size: 42px;
+        }
+        
+        .maintenance-icon {
+            font-size: 80px;
+            color: #f59e0b;
+            margin: 30px 0;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        h1 {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #fff;
+        }
+        
+        .message {
+            font-size: 18px;
+            color: #9ca3af;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+        
+        .countdown-container {
+            margin: 40px 0;
+        }
+        
+        .countdown-label {
+            font-size: 14px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+        
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .countdown-item {
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            border-radius: 12px;
+            padding: 20px 30px;
+            min-width: 100px;
+        }
+        
+        .countdown-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: #818cf8;
+        }
+        
+        .countdown-unit {
+            font-size: 12px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 8px;
+        }
+        
+        .social-links {
+            margin-top: 40px;
+        }
+        
+        .social-links a {
+            display: inline-block;
+            width: 44px;
+            height: 44px;
+            line-height: 44px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: #fff;
+            margin: 0 8px;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        
+        .social-links a:hover {
+            background: #6366f1;
+            transform: translateY(-3px);
+        }
+        
+        /* Background animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bg-animation span {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        .bg-animation span:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .bg-animation span:nth-child(2) { left: 20%; animation-delay: 2s; width: 30px; height: 30px; }
+        .bg-animation span:nth-child(3) { left: 30%; animation-delay: 4s; }
+        .bg-animation span:nth-child(4) { left: 40%; animation-delay: 1s; width: 25px; height: 25px; }
+        .bg-animation span:nth-child(5) { left: 50%; animation-delay: 3s; }
+        .bg-animation span:nth-child(6) { left: 60%; animation-delay: 5s; width: 35px; height: 35px; }
+        .bg-animation span:nth-child(7) { left: 70%; animation-delay: 2.5s; }
+        .bg-animation span:nth-child(8) { left: 80%; animation-delay: 0.5s; width: 28px; height: 28px; }
+        .bg-animation span:nth-child(9) { left: 90%; animation-delay: 4.5s; }
+        .bg-animation span:nth-child(10) { left: 15%; animation-delay: 1.5s; width: 22px; height: 22px; }
+        
+        @media (max-width: 600px) {
+            .logo {
+                font-size: 32px;
+            }
+            
+            .maintenance-icon {
+                font-size: 60px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            .countdown-item {
+                padding: 15px 20px;
+                min-width: 70px;
+            }
+            
+            .countdown-value {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    
+    <div class="maintenance-container">
+        <div class="logo">
+            <i class="fas fa-gamepad"></i>
+            <span>GAN</span>
+        </div>
+        
+        <i class="fas fa-tools maintenance-icon"></i>
+        
+        <h1 id="maintenanceTitle">Under Maintenance</h1>
+        <p class="message" id="maintenanceMessage">We're performing scheduled maintenance to improve your gaming experience. We'll be back soon!</p>
+        
+        <div class="countdown-container" id="countdownContainer">
+            <div class="countdown-label">Estimated Time Remaining</div>
+            <div class="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-value" id="hours">00</div>
+                    <div class="countdown-unit">Hours</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value" id="minutes">00</div>
+                    <div class="countdown-unit">Minutes</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value" id="seconds">00</div>
+                    <div class="countdown-unit">Seconds</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="social-links">
+            <a href="#" title="Discord"><i class="fab fa-discord"></i></a>
+            <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = window.location.origin;
+        let maintenanceEndTime = null;
+        
+        async function checkMaintenanceStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/maintenance/status`);
+                const data = await response.json();
+                
+                // If maintenance is not enabled, redirect to home
+                if (!data.maintenance) {
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                // Update content
+                document.getElementById('maintenanceTitle').textContent = data.title || 'Under Maintenance';
+                document.getElementById('maintenanceMessage').textContent = data.message || "We're performing scheduled maintenance. We'll be back soon!";
+                
+                if (data.end_time) {
+                    maintenanceEndTime = new Date(data.end_time);
+                    updateCountdown();
+                } else {
+                    document.getElementById('countdownContainer').style.display = 'none';
+                }
+                
+            } catch (error) {
+                console.error('Failed to check maintenance status:', error);
+            }
+        }
+        
+        function updateCountdown() {
+            if (!maintenanceEndTime) return;
+            
+            const now = new Date();
+            const diff = maintenanceEndTime - now;
+            
+            if (diff <= 0) {
+                // Maintenance should be over, check status again
+                checkMaintenanceStatus();
+                return;
+            }
+            
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+        
+        // Initial check
+        checkMaintenanceStatus();
+        
+        // Update countdown every second
+        setInterval(updateCountdown, 1000);
+        
+        // Check maintenance status every 30 seconds
+        setInterval(checkMaintenanceStatus, 30000);
+    </script>
+</body>
+</html>

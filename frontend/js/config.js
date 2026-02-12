@@ -153,7 +153,41 @@ const Utils = {
     }
 };
 
+// Maintenance Check - runs on all pages except maintenance.html
+async function checkMaintenanceMode() {
+    // Skip if already on maintenance page
+    if (window.location.pathname.includes('maintenance.html')) {
+        return false;
+    }
+    
+    // Skip if on admin panel
+    if (window.location.pathname.includes('/admin/')) {
+        return false;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/maintenance/status`);
+        const data = await response.json();
+        
+        if (data.maintenance === true) {
+            // Redirect to maintenance page
+            window.location.href = 'maintenance.html';
+            return true;
+        }
+    } catch (error) {
+        console.error('Failed to check maintenance status:', error);
+    }
+    
+    return false;
+}
+
+// Auto-check maintenance on page load
+document.addEventListener('DOMContentLoaded', () => {
+    checkMaintenanceMode();
+});
+
 // Export for use in other files
 window.CONFIG = CONFIG;
 window.Utils = Utils;
 window.API_BASE_URL = API_BASE_URL;
+window.checkMaintenanceMode = checkMaintenanceMode;

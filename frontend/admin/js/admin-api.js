@@ -246,6 +246,19 @@ const ADMIN_API = {
     
     async getRewardsStats() {
         return await this.request('/api/admin/rewards/stats');
+    },
+    
+    // ==================== Maintenance ====================
+    
+    async getMaintenanceSettings() {
+        return await this.request('/api/admin/maintenance');
+    },
+    
+    async updateMaintenanceSettings(settings) {
+        return await this.request('/api/admin/maintenance', {
+            method: 'PUT',
+            body: JSON.stringify(settings)
+        });
     }
 };
 

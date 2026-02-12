@@ -114,6 +114,35 @@ async def health_check():
     }
 
 
+# Public maintenance status endpoint
+@app.get("/api/maintenance/status")
+async def get_maintenance_status():
+    """Public endpoint to check maintenance mode status"""
+    from sqlalchemy.orm import Session
+    from .database import SessionLocal
+    from .models.settings import SiteSettings, MAINTENANCE_ENABLED, MAINTENANCE_END_TIME, MAINTENANCE_MESSAGE, MAINTENANCE_TITLE
+    
+    db = SessionLocal()
+    try:
+        def get_setting(key: str):
+            setting = db.query(SiteSettings).filter(SiteSettings.key == key).first()
+            return setting.value if setting else None
+        
+        enabled = get_setting(MAINTENANCE_ENABLED)
+        end_time = get_setting(MAINTENANCE_END_TIME)
+        title = get_setting(MAINTENANCE_TITLE)
+        message = get_setting(MAINTENANCE_MESSAGE)
+        
+        return {
+            "maintenance": enabled == "true" if enabled else False,
+            "end_time": end_time if end_time else None,
+            "title": title or "Under Maintenance",
+            "message": message or "We're performing scheduled maintenance. We'll be back soon!"
+        }
+    finally:
+        db.close()
+
+
 # Root redirect
 @app.get("/")
 async def root():

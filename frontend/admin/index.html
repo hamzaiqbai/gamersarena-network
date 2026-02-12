@@ -127,6 +127,10 @@
                     <i class="fas fa-gift"></i>
                     <span>Rewards</span>
                 </a>
+                <a href="#" class="nav-item" data-tab="maintenance">
+                    <i class="fas fa-tools"></i>
+                    <span>Maintenance</span>
+                </a>
             </nav>
             
             <div class="sidebar-footer">
@@ -458,6 +462,65 @@
                             <tbody id="leaderboardTableBody">
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Maintenance Tab -->
+            <div id="maintenanceTab" class="tab-content hidden">
+                <div class="page-header">
+                    <h1><i class="fas fa-tools"></i> Maintenance Mode</h1>
+                </div>
+                
+                <div class="maintenance-container">
+                    <div class="maintenance-card">
+                        <div class="maintenance-status">
+                            <h2>Site Status</h2>
+                            <div class="status-toggle">
+                                <label class="switch">
+                                    <input type="checkbox" id="maintenanceEnabled">
+                                    <span class="slider round"></span>
+                                </label>
+                                <span id="maintenanceStatusText">Site is Online</span>
+                            </div>
+                        </div>
+                        
+                        <div class="maintenance-settings">
+                            <div class="form-group">
+                                <label for="maintenanceTitle">Maintenance Title</label>
+                                <input type="text" id="maintenanceTitle" value="Under Maintenance" placeholder="Title shown to users">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="maintenanceMessage">Maintenance Message</label>
+                                <textarea id="maintenanceMessage" rows="3" placeholder="Message to display to users">We're performing scheduled maintenance. We'll be back soon!</textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="maintenanceEndTime">Estimated End Time</label>
+                                <input type="datetime-local" id="maintenanceEndTime">
+                            </div>
+                            
+                            <div class="maintenance-actions">
+                                <button type="button" class="btn-primary" onclick="saveMaintenanceSettings()">
+                                    <i class="fas fa-save"></i> Save Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="maintenance-preview">
+                        <h3>Preview</h3>
+                        <div class="preview-box">
+                            <div class="preview-content">
+                                <i class="fas fa-tools"></i>
+                                <h2 id="previewTitle">Under Maintenance</h2>
+                                <p id="previewMessage">We're performing scheduled maintenance. We'll be back soon!</p>
+                                <div class="preview-countdown" id="previewCountdown">
+                                    <span>--:--:--</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

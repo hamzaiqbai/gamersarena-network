@@ -253,6 +253,9 @@ function switchTab(tab) {
         case 'rewards':
             loadRewards();
             break;
+        case 'maintenance':
+            loadMaintenanceSettings();
+            break;
     }
 }
 
@@ -919,3 +922,109 @@ window.closeTournamentModal = closeTournamentModal;
 window.editTournament = editTournament;
 window.deleteTournament = deleteTournament;
 window.completeTournament = completeTournament;
+window.deleteUser = deleteUser;
+window.saveMaintenanceSettings = saveMaintenanceSettings;
+
+// ==================== Maintenance Mode ====================
+
+async function loadMaintenanceSettings() {
+    try {
+        const settings = await ADMIN_API.getMaintenanceSettings();
+        
+        document.getElementById('maintenanceEnabled').checked = settings.enabled;
+        document.getElementById('maintenanceTitle').value = settings.title || 'Under Maintenance';
+        document.getElementById('maintenanceMessage').value = settings.message || "We're performing scheduled maintenance. We'll be back soon!";
+        
+        if (settings.end_time) {
+            // Convert ISO string to datetime-local format
+            const date = new Date(settings.end_time);
+            const localDateTime = date.toISOString().slice(0, 16);
+            document.getElementById('maintenanceEndTime').value = localDateTime;
+        } else {
+            document.getElementById('maintenanceEndTime').value = '';
+        }
+        
+        updateMaintenanceUI(settings.enabled);
+        updatePreview();
+        
+    } catch (error) {
+        console.error('Failed to load maintenance settings:', error);
+        showToast('Failed to load maintenance settings', 'error');
+    }
+}
+
+function updateMaintenanceUI(enabled) {
+    const statusText = document.getElementById('maintenanceStatusText');
+    if (enabled) {
+        statusText.textContent = 'Site is Under Maintenance';
+        statusText.style.color = '#f59e0b';
+    } else {
+        statusText.textContent = 'Site is Online';
+        statusText.style.color = '#10b981';
+    }
+}
+
+function updatePreview() {
+    const title = document.getElementById('maintenanceTitle').value;
+    const message = document.getElementById('maintenanceMessage').value;
+    const endTime = document.getElementById('maintenanceEndTime').value;
+    
+    document.getElementById('previewTitle').textContent = title || 'Under Maintenance';
+    document.getElementById('previewMessage').textContent = message || "We're performing scheduled maintenance. We'll be back soon!";
+    
+    if (endTime) {
+        const now = new Date();
+        const end = new Date(endTime);
+        const diff = end - now;
+        
+        if (diff > 0) {
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            document.getElementById('previewCountdown').innerHTML = 
+                `<span>${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}</span>`;
+        } else {
+            document.getElementById('previewCountdown').innerHTML = '<span>00:00:00</span>';
+        }
+    } else {
+        document.getElementById('previewCountdown').innerHTML = '<span>--:--:--</span>';
+    }
+}
+
+async function saveMaintenanceSettings() {
+    const enabled = document.getElementById('maintenanceEnabled').checked;
+    const title = document.getElementById('maintenanceTitle').value;
+    const message = document.getElementById('maintenanceMessage').value;
+    const endTimeValue = document.getElementById('maintenanceEndTime').value;
+    
+    const settings = {
+        enabled,
+        title,
+        message,
+        end_time: endTimeValue ? new Date(endTimeValue).toISOString() : null
+    };
+    
+    try {
+        await ADMIN_API.updateMaintenanceSettings(settings);
+        showToast(`Maintenance mode ${enabled ? 'enabled' : 'disabled'}`, 'success');
+        updateMaintenanceUI(enabled);
+    } catch (error) {
+        console.error('Failed to save maintenance settings:', error);
+        showToast('Failed to save maintenance settings', 'error');
+    }
+}
+
+// Setup maintenance event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    // Only run if on admin page with maintenance elements
+    const maintenanceEnabled = document.getElementById('maintenanceEnabled');
+    if (maintenanceEnabled) {
+        maintenanceEnabled.addEventListener('change', () => {
+            updateMaintenanceUI(maintenanceEnabled.checked);
+        });
+        
+        document.getElementById('maintenanceTitle').addEventListener('input', updatePreview);
+        document.getElementById('maintenanceMessage').addEventListener('input', updatePreview);
+        document.getElementById('maintenanceEndTime').addEventListener('change', updatePreview);
+    }
+});
